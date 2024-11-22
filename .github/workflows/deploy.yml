@@ -82,7 +82,7 @@ jobs:
     needs: push-to-docker-hub
     environment:
       name: Weiterbildungsfinder
-      url: https://neuefische.de/ # Link to deployment
+      url: https://kursda.onrender.com/
     steps:
       - name: Trigger Render.com Deployment
         run: |

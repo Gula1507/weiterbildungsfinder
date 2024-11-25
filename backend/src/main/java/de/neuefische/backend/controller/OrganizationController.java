@@ -18,12 +18,8 @@ public class OrganizationController {
     private final OrganizationService organizationService;
 
     @GetMapping
-    public ResponseEntity<List<Organization>> getAllOrganizations() {
-        List<Organization> organizations = organizationService.getAllOrganizations();
-        if (organizations.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(organizations);
+    public List<Organization> getAllOrganizations() {
+        return organizationService.getAllOrganizations();
 
     }
 }

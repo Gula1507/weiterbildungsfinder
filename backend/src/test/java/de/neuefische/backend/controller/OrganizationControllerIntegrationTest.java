@@ -44,8 +44,8 @@ class OrganizationControllerIntegrationTest {
     void shouldReturnEmptyListIntegrationTest() throws Exception {
         organizationRepository.deleteAll();
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
-                .andExpect(MockMvcResultMatchers.status().isNoContent())
-                .andExpect(MockMvcResultMatchers.content().string(""));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 
 

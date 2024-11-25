@@ -1,5 +1,5 @@
 import {Organization} from "../types/Organization.ts";
-import OrganizationCard from "./OrganizationCard.tsx";
+import OrganizationGallery from "./OrganizationGallery.tsx";
 
 type HomeProps = {
     organizations: Organization[]
@@ -8,10 +8,9 @@ type HomeProps = {
 function Home(props: HomeProps) {
     return (
         <div>
-            {props.organizations.map((organization) => (
-                <OrganizationCard organization={organization} key={organization.id}/>))
-            }
-        </div>)
+            <OrganizationGallery organizations={props.organizations}/>
+        </div>
+    );
 }
 
 export default Home;

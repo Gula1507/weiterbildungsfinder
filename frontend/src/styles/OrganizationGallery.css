@@ -1,0 +1,14 @@
+.gallery-container {
+    display: flex;
+    flex-direction: column; /* Vertikale Ausrichtung */
+    gap: 20px; /* Abstand zwischen den Cards */
+    padding: 20px;
+}
+
+.card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

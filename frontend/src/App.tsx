@@ -23,9 +23,11 @@ function App() {
     }, [])
 
     return (
+        <div className="app-container">
         <Routes>
             <Route path="/" element={<Home organizations={organizations}/>}/>
         </Routes>
+        </div>
     )
 }
 

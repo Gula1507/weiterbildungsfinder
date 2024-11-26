@@ -26,8 +26,8 @@ class OrganizationServiceTest {
 
     @Test
     void getAllOrganizations_shouldReturnAllInputOrganizations() {
-        Organization organization1 = new Organization(1, "testname1", "testhomepage1");
-        Organization organization2 = new Organization(1, "testname2", "testhomepage2");
+        Organization organization1 = new Organization("1", "testname1", "testhomepage1");
+        Organization organization2 = new Organization("2", "testname2", "testhomepage2");
         List<Organization> expected = new ArrayList<>(List.of(organization1, organization2));
         when(organizationRepository.findAll()).thenReturn(expected);
         List<Organization> actual = organizationService.getAllOrganizations();

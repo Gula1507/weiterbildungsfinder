@@ -22,7 +22,7 @@ class OrganizationControllerIntegrationTest {
 
     @Test
     void getAllOrganizations_shouldReturnListOfOrganizations() throws Exception {
-        Organization organization = new Organization(1, "testname", "testhomepage");
+        Organization organization = new Organization("1", "testname", "testhomepage");
         organizationRepository.save(organization);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -30,7 +30,7 @@ class OrganizationControllerIntegrationTest {
                         """
                                 [
                                 {
-                                  "id": 1,
+                                  "id": "1",
                                   "name": "testname",
                                   "homepage": "testhomepage"
                                 

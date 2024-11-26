@@ -12,7 +12,6 @@ function OrganizationCard(props: OrganizationPageProps) {
             <a className="card-homepage" href={props.organization.homepage}>{props.organization.homepage}</a>
         </div>
     )
-        ;
 }
 
 export default OrganizationCard;

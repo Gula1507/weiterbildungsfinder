@@ -13,7 +13,8 @@ import static org.mockito.Mockito.*;
 class OrganizationServiceTest {
 
     OrganizationRepository organizationRepository = mock(OrganizationRepository.class);
-    OrganizationService organizationService = new OrganizationService(organizationRepository);
+    IdService idService = new IdService();
+    OrganizationService organizationService = new OrganizationService(organizationRepository, idService);
 
     @Test
     void getAllOrganizations_returnsEmptyList_whenRepositoryIsEmpty() {

@@ -1,6 +1,6 @@
 export type Organization =
     {
-        id: number,
+        id: string,
         name: string,
         homepage: string;
     }

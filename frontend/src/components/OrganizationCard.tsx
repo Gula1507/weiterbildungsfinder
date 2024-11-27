@@ -9,10 +9,10 @@ function OrganizationCard(props: OrganizationPageProps) {
     return (
         <div className="card">
             <h2 className="card-title">{props.organization.name}</h2>
-            <a className="card-homepage" href={props.organization.homepage}>{props.organization.homepage}</a>
+            <a className="card-homepage" target="_blank"
+               href={props.organization.homepage}>{props.organization.homepage}</a>
         </div>
     )
-        ;
 }
 
 export default OrganizationCard;

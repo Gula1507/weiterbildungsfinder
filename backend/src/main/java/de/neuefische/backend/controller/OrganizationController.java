@@ -25,6 +25,6 @@ public class OrganizationController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Organization addOrganization(@Valid @RequestBody OrganizationDTO organizationDTO) {
-        return organizationService.save(organizationDTO);
+        return organizationService.saveOrganizationFromDTO(organizationDTO);
     }
 }

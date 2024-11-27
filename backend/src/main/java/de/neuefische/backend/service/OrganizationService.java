@@ -19,7 +19,7 @@ public class OrganizationService {
         return organizationRepo.findAll();
     }
 
-    public Organization save(OrganizationDTO organizationDTO) {
+    public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {
         Organization organization = new Organization(
                 idService.generateRandomId(),
                 organizationDTO.name(), organizationDTO.homepage());

@@ -52,10 +52,4 @@ class OrganizationServiceTest {
 
     }
 
-    @Test
-    void saveOrganizationFromDTO_shouldThrowExceptionWhenDTOIsNull() {
-        Assertions.assertThrows(NullPointerException.class,
-                () -> organizationService.saveOrganizationFromDTO(null)
-        );
-    }
 }

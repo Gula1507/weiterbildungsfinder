@@ -3,6 +3,7 @@ package de.neuefische.backend.controller;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.service.OrganizationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class OrganizationController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Organization addOrganization(@RequestBody OrganizationDTO organizationDTO) {
+    public Organization addOrganization(@Valid @RequestBody OrganizationDTO organizationDTO) {
         return organizationService.save(organizationDTO);
     }
 }

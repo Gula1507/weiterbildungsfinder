@@ -1,5 +1,6 @@
 package de.neuefische.backend.service;
 
+import de.neuefische.backend.exception.OrganizationNotFoundException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
@@ -8,7 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static org.bson.assertions.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class OrganizationServiceTest {
@@ -23,7 +27,7 @@ class OrganizationServiceTest {
         when(mockedOrganisationRepo.findAll()).thenReturn((List.of()));
         List<Organization> actual = organizationService.getAllOrganizations();
         verify(mockedOrganisationRepo).findAll();
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -34,7 +38,7 @@ class OrganizationServiceTest {
         when(mockedOrganisationRepo.findAll()).thenReturn(expected);
         List<Organization> actual = organizationService.getAllOrganizations();
         verify(mockedOrganisationRepo).findAll();
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -48,8 +52,27 @@ class OrganizationServiceTest {
         verify(mockedOrganisationRepo).save(expected);
         verify(mockedIdService).generateRandomId();
 
-        Assertions.assertEquals(expected, organizationActual);
+        assertEquals(expected, organizationActual);
 
+    }
+
+    @Test
+    void getOrganizationDTObyId_shouldReturnOrganizationDTO() {
+        Organization organization = new Organization("123abc", "Test Organization", "https://testpage.com");
+        when(mockedOrganisationRepo.findById("123abc")).thenReturn(Optional.of(organization));
+        OrganizationDTO result = organizationService.getOrganizationDTObyId("123abc");
+        assertNotNull(result);
+        verify(mockedOrganisationRepo).findById("123abc");
+        assertEquals("Test Organization", result.name());
+        assertEquals("https://testpage.com", result.homepage());
+    }
+
+    @Test
+    void getOrganizationById_shouldThrowOrganizationNotFoundException() {
+        when(mockedOrganisationRepo.findById("nonexistentId")).thenReturn(Optional.empty());
+        Assertions.assertThrows(OrganizationNotFoundException.class, () -> {
+            organizationService.getOrganizationDTObyId("nonexistentId");
+        });
     }
 
 }

@@ -10,10 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,7 +33,7 @@ class OrganizationControllerIntegrationTest {
         Organization organization = new Organization("1", "testname", "testhomepage");
         organizationRepository.save(organization);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(content().json(
                         """
                                 [
@@ -52,7 +50,7 @@ class OrganizationControllerIntegrationTest {
     @Test
     void getAllOrganizations_shouldReturnEmptyListIntegrationTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(content().string("[]"));
     }
 
@@ -67,7 +65,7 @@ class OrganizationControllerIntegrationTest {
                                 "homepage": "testhomepage"
                                 }
                                 """))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andExpect(content().json(
                         """
                                 {
@@ -88,7 +86,28 @@ class OrganizationControllerIntegrationTest {
                                 "homepage": "testhomepage"
                                 }
                                 """))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void getOrganizationById_shouldReturnOrganizationDTO() throws Exception {
+        Organization organization = new Organization("123abc", "testname", "testpage");
+        organizationRepository.save(organization);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "123abc")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name").value("testname"))
+                .andExpect(jsonPath("$.homepage").value("testpage"));
+    }
+
+    @Test
+    void getOrganizationById_shouldReturnNotFoundWhenOrganizationDoesNotExist() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "nonexistentId")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("Weiterbildungsanbieter mit id: nonexistentId nicht gefunden"));
+    }
 }

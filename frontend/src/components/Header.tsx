@@ -11,7 +11,7 @@ function Header() {
 
     return (
         <div>
-            <button onClick={handleAddOrganization}>Neue Weiterbildungsanbieter</button>
+            <button onClick={handleAddOrganization}>Weiterbildungsanbieter hinzufügen</button>
         </div>
     );
 }

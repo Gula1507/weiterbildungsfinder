@@ -30,7 +30,7 @@ function NewOrganization() {
 
     return (
         <div className="new-organization">
-            <h2>Neuer Weiterbildungsanbieter hinzufügen</h2>
+            <h2>Neuer Weiterbildungsanbieter</h2>
             <form onSubmit={handleSubmit} className="form">
                 <input
                     type="text"

@@ -5,6 +5,7 @@ import axios from "axios";
 import {Organization} from "./types/Organization.ts";
 import Home from "./components/Home.tsx";
 import NewOrganization from "./components/NewOrganization.tsx";
+import OrganizationDetails from "./components/OrganizationDetails.tsx";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Routes>
             <Route path="/" element={<Home organizations={organizations}/>}/>
             <Route path="/add-organization" element={<NewOrganization/>}/>
+            <Route path="/api/organizations/:id" element={<OrganizationDetails/>}/>
         </Routes>
         </div>
     )

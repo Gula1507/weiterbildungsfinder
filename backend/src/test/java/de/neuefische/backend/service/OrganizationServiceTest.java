@@ -70,9 +70,9 @@ class OrganizationServiceTest {
     @Test
     void getOrganizationById_shouldThrowOrganizationNotFoundException() {
         when(mockedOrganisationRepo.findById("nonexistentId")).thenReturn(Optional.empty());
-        Assertions.assertThrows(OrganizationNotFoundException.class, () -> {
-            organizationService.getOrganizationDTObyId("nonexistentId");
-        });
+        Assertions.assertThrows(OrganizationNotFoundException.class, () ->
+                organizationService.getOrganizationDTObyId("nonexistentId"));
+
     }
 
 }

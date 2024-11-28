@@ -4,7 +4,6 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {Organization} from "./types/Organization.ts";
 import Home from "./components/Home.tsx";
-import Header from "./components/Header.tsx";
 import NewOrganization from "./components/NewOrganization.tsx";
 
 
@@ -26,7 +25,7 @@ function App() {
 
     return (
         <div className="app-container">
-            <Header/>
+
         <Routes>
             <Route path="/" element={<Home organizations={organizations}/>}/>
             <Route path="/add-organization" element={<NewOrganization/>}/>

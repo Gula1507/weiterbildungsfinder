@@ -1,5 +1,6 @@
 package de.neuefische.backend.service;
 
+import de.neuefische.backend.exception.OrganizationNotFoundException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
@@ -24,5 +25,11 @@ public class OrganizationService {
                 idService.generateRandomId(),
                 organizationDTO.name(), organizationDTO.homepage());
         return organizationRepo.save(organization);
+    }
+
+    public OrganizationDTO getOrganizationDTObyId(String id) {
+        Organization organization = organizationRepo.findById(id)
+                .orElseThrow(() -> new OrganizationNotFoundException(id));
+        return new OrganizationDTO(organization.name(), organization.homepage());
     }
 }

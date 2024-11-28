@@ -33,5 +33,10 @@ public class GlobalExceptionHandler {
         return new ErrorMessage("Validation failed: " + errorMessage);
     }
 
+    @ExceptionHandler(OrganizationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorMessage handleOrganizationNotFoundException(OrganizationNotFoundException exception) {
+        return new ErrorMessage(exception.getMessage());
+    }
 
 }

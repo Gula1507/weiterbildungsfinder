@@ -15,9 +15,9 @@ function OrganizationCard(props: OrganizationPageProps) {
     }
 
     return (
-        <div className="card" onClick={switchToDetailsPage}>
+        <button className="card" onClick={switchToDetailsPage}>
             <h2 className="card-title">{props.organization.name}</h2>
-        </div>
+        </button>
     )
 }
 

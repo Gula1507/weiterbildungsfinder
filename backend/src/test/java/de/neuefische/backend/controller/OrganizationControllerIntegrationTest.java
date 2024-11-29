@@ -138,7 +138,7 @@ class OrganizationControllerIntegrationTest {
                 }
                 """;
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/organizations/{id}/update", id)
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/organizations/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -160,7 +160,7 @@ class OrganizationControllerIntegrationTest {
                 }
                 """;
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/organizations/{id}/update", nonExistingId)
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/organizations/{id}", nonExistingId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(requestBody))

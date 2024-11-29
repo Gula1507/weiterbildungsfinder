@@ -5,6 +5,7 @@ import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,6 +21,15 @@ class OrganizationServiceTest {
     OrganizationRepository mockedOrganisationRepo = mock(OrganizationRepository.class);
     IdService mockedIdService = mock(IdService.class);
     OrganizationService organizationService = new OrganizationService(mockedOrganisationRepo, mockedIdService);
+    private Organization testOrganization;
+
+    @BeforeEach
+    void setUp() {
+
+        testOrganization = new Organization("1", "testname", "testhomepage",
+                "testemail", "testaddress");
+    }
+
 
     @Test
     void getAllOrganizations_returnsEmptyList_whenRepositoryIsEmpty() {
@@ -32,11 +42,9 @@ class OrganizationServiceTest {
 
     @Test
     void getAllOrganizations_shouldReturnAllInputOrganizations() {
-        Organization organization1 = new Organization("1", "testname1", "testhomepage1",
-                "testemail1", "testaddress1");
-        Organization organization2 = new Organization("2", "testname2", "testhomepage2",
+        Organization testOrganization2 = new Organization("2", "testname2", "testhomepage2",
                 "testemail2", "testaddress2");
-        List<Organization> expected = new ArrayList<>(List.of(organization1, organization2));
+        List<Organization> expected = new ArrayList<>(List.of(testOrganization, testOrganization2));
         when(mockedOrganisationRepo.findAll()).thenReturn(expected);
         List<Organization> actual = organizationService.getAllOrganizations();
         verify(mockedOrganisationRepo).findAll();
@@ -47,29 +55,25 @@ class OrganizationServiceTest {
     void saveOrganizationFromDTO_shouldReturnOrganizationWithGeneratedId() {
         OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage",
                 "testemail", "testaddress");
-        Organization expected = new Organization("123", "testname", "testhomepage",
-                "testemail", "testaddress");
-        when(mockedOrganisationRepo.save(expected)).thenReturn(expected);
-        when(mockedIdService.generateRandomId()).thenReturn("123");
+        when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
+        when(mockedIdService.generateRandomId()).thenReturn("1");
 
         Organization organizationActual = organizationService.saveOrganizationFromDTO(organizationDTO);
-        verify(mockedOrganisationRepo).save(expected);
+        verify(mockedOrganisationRepo).save(testOrganization);
         verify(mockedIdService).generateRandomId();
 
-        assertEquals(expected, organizationActual);
+        assertEquals(testOrganization, organizationActual);
 
     }
 
     @Test
     void getOrganizationDTObyId_shouldReturnOrganizationDTO() {
-        Organization organization = new Organization("123abc", "Test Organization",
-                "https://testpage.com", "testemail", "testaddress");
-        when(mockedOrganisationRepo.findById("123abc")).thenReturn(Optional.of(organization));
-        OrganizationDTO result = organizationService.getOrganizationDTObyId("123abc");
+        when(mockedOrganisationRepo.findById("1")).thenReturn(Optional.of(testOrganization));
+        OrganizationDTO result = organizationService.getOrganizationDTObyId("1");
         assertNotNull(result);
-        verify(mockedOrganisationRepo).findById("123abc");
-        assertEquals("Test Organization", result.name());
-        assertEquals("https://testpage.com", result.homepage());
+        verify(mockedOrganisationRepo).findById("1");
+        assertEquals("testname", result.name());
+        assertEquals("testhomepage", result.homepage());
         assertEquals("testemail", result.email());
         assertEquals("testaddress", result.address());
     }

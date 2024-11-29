@@ -23,16 +23,18 @@ class OrganizationControllerIntegrationTest {
     @Autowired
     OrganizationRepository organizationRepository;
 
+    private Organization testOrganization;
+
     @BeforeEach
     void setUp() {
         organizationRepository.deleteAll();
+        testOrganization = new Organization("1", "testname", "testhomepage",
+                "testemail", "testaddress");
     }
 
     @Test
     void getAllOrganizations_shouldReturnListOfOrganizations() throws Exception {
-        Organization organization = new Organization("1", "testname", "testhomepage",
-                "testemail", "testaddress");
-        organizationRepository.save(organization);
+        organizationRepository.save(testOrganization);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
@@ -94,15 +96,13 @@ class OrganizationControllerIntegrationTest {
 
     @Test
     void getOrganizationById_shouldReturnOrganizationDTO() throws Exception {
-        Organization organization = new Organization("123abc", "testname", "testpage",
-                "testemail", "testaddress");
-        organizationRepository.save(organization);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "123abc")
+        organizationRepository.save(testOrganization);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value("testname"))
-                .andExpect(jsonPath("$.homepage").value("testpage"))
+                .andExpect(jsonPath("$.homepage").value("testhomepage"))
                 .andExpect(jsonPath("$.email").value("testemail"))
                 .andExpect(jsonPath("$.address").value("testaddress"));
     }

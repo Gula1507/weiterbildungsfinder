@@ -36,8 +36,17 @@ function OrganizationDetails() {
         <div>
             <h1>{organization?.name}</h1>
             <p>
-                Homepage: <a href={organization?.homepage}>{organization?.homepage}</a>
+                Webseite: <a
+                href={organization?.homepage?.startsWith('http') ? organization?.homepage
+                    : `http://${organization?.homepage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {organization?.homepage}
+            </a>
             </p>
+            <p>Email: {organization?.email}</p>
+            <p>Adresse: {organization?.address}</p>
         </div>
     );
 }

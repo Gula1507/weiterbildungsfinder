@@ -5,13 +5,15 @@ import "../styles/NewOrganization.css"
 function NewOrganization() {
     const [name, setName] = useState("");
     const [homepage, setHomepage] = useState("");
+    const [email, setEmail] = useState("");
+    const [address, setAddress] = useState("");
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        const newOrganization = {name, homepage};
+        const newOrganization = {name, homepage, email, address};
 
         axios
             .post('api/organizations', newOrganization)
@@ -44,6 +46,18 @@ function NewOrganization() {
                     value={homepage}
                     onChange={(e) => setHomepage(e.target.value)}
                     placeholder="Webseite"
+                />
+                <input
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Email"
+                />
+                <input
+                    type="text"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Address"
                 />
                 <button type="submit">Absenden</button>
             </form>

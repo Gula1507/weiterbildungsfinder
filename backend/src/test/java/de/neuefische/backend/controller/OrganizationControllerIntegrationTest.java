@@ -116,4 +116,56 @@ class OrganizationControllerIntegrationTest {
                 .andExpect(jsonPath("$.message")
                         .value("Weiterbildungsanbieter mit id: nonexistentId nicht gefunden"));
     }
+
+    @Test
+    void updateOrganization_shouldReturnOrganizationWithNewHomepage_whenHomepageUpdate() throws Exception {
+        organizationRepository.save(testOrganization);
+        String id = "1";
+        String requestBody = """
+                {
+                  "name": "testname",
+                  "homepage": "newhomepage",
+                  "email": "testemail",
+                  "address": "testaddress"
+                }
+                """;
+        String expectedResponseBody = """
+                {
+                  "name": "testname",
+                  "homepage": "newhomepage",
+                  "email": "testemail",
+                  "address": "testaddress"
+                }
+                """;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/organizations/{id}/update", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponseBody))
+                .andExpect(jsonPath("$.id").value(id));
+    }
+
+    @Test
+    void updateOrganization_shouldReturn404_whenOrganizationNotFound() throws Exception {
+
+        String nonExistingId = "999";
+        String requestBody = """
+                {
+                  "name": "testname",
+                  "homepage": "newhomepage",
+                  "email": "testemail",
+                  "address": "testaddress"
+                }
+                """;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/organizations/{id}/update", nonExistingId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("Weiterbildungsanbieter mit id: 999 nicht gefunden"));
+    }
 }

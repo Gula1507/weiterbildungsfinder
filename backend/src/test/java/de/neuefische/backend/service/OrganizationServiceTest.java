@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.bson.assertions.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class OrganizationServiceTest {
@@ -83,7 +84,34 @@ class OrganizationServiceTest {
         when(mockedOrganisationRepo.findById("nonexistentId")).thenReturn(Optional.empty());
         Assertions.assertThrows(OrganizationNotFoundException.class, () ->
                 organizationService.getOrganizationDTObyId("nonexistentId"));
-
     }
 
+    @Test
+    void updateOrganizationFromDTO_shouldReturnUpdatedOrganization_whenOrganizationExists() {
+        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name",
+                "Updated Homepage", "updated@email.com", "Updated Address");
+        String id = "1";
+        Organization expectedOrganization = new Organization(id, "Updated Name", "Updated Homepage",
+                "updated@email.com", "Updated Address");
+        when(mockedOrganisationRepo.existsById(id)).thenReturn(true);
+        when(mockedOrganisationRepo.save(any(Organization.class))).thenReturn(expectedOrganization);
+
+        Organization actualOrganization = organizationService.updateOrganizationFromDTO(id, organizationDTO);
+
+        verify(mockedOrganisationRepo).existsById(id);
+        verify(mockedOrganisationRepo).save(any(Organization.class));
+        assertEquals(expectedOrganization, actualOrganization);
+    }
+
+    @Test
+    void updateOrganizationFromDTO_shouldThrowException_whenOrganizationNotExist() {
+        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name",
+                "Updated Homepage", "updated@email.com", "Updated Address");
+        String id = "999";
+        when(mockedOrganisationRepo.existsById(id)).thenReturn(false);
+
+        assertThrows(OrganizationNotFoundException.class, () ->
+                organizationService.updateOrganizationFromDTO(id, organizationDTO));
+        verify(mockedOrganisationRepo).existsById(id);
+    }
 }

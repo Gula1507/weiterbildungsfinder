@@ -23,13 +23,15 @@ public class OrganizationService {
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {
         Organization organization = new Organization(
                 idService.generateRandomId(),
-                organizationDTO.name(), organizationDTO.homepage());
+                organizationDTO.name(), organizationDTO.homepage(),
+                organizationDTO.email(), organizationDTO.address());
         return organizationRepo.save(organization);
     }
 
     public OrganizationDTO getOrganizationDTObyId(String id) {
         Organization organization = organizationRepo.findById(id)
                 .orElseThrow(() -> new OrganizationNotFoundException(id));
-        return new OrganizationDTO(organization.name(), organization.homepage());
+        return new OrganizationDTO(organization.name(), organization.homepage(), organization.email(),
+                organization.address());
     }
 }

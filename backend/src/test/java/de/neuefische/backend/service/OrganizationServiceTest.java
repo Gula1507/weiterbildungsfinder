@@ -32,8 +32,10 @@ class OrganizationServiceTest {
 
     @Test
     void getAllOrganizations_shouldReturnAllInputOrganizations() {
-        Organization organization1 = new Organization("1", "testname1", "testhomepage1");
-        Organization organization2 = new Organization("2", "testname2", "testhomepage2");
+        Organization organization1 = new Organization("1", "testname1", "testhomepage1",
+                "testemail1", "testaddress1");
+        Organization organization2 = new Organization("2", "testname2", "testhomepage2",
+                "testemail2", "testaddress2");
         List<Organization> expected = new ArrayList<>(List.of(organization1, organization2));
         when(mockedOrganisationRepo.findAll()).thenReturn(expected);
         List<Organization> actual = organizationService.getAllOrganizations();
@@ -43,8 +45,10 @@ class OrganizationServiceTest {
 
     @Test
     void saveOrganizationFromDTO_shouldReturnOrganizationWithGeneratedId() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage");
-        Organization expected = new Organization("123", "testname", "testhomepage");
+        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage",
+                "testemail", "testaddress");
+        Organization expected = new Organization("123", "testname", "testhomepage",
+                "testemail", "testaddress");
         when(mockedOrganisationRepo.save(expected)).thenReturn(expected);
         when(mockedIdService.generateRandomId()).thenReturn("123");
 
@@ -58,13 +62,16 @@ class OrganizationServiceTest {
 
     @Test
     void getOrganizationDTObyId_shouldReturnOrganizationDTO() {
-        Organization organization = new Organization("123abc", "Test Organization", "https://testpage.com");
+        Organization organization = new Organization("123abc", "Test Organization",
+                "https://testpage.com", "testemail", "testaddress");
         when(mockedOrganisationRepo.findById("123abc")).thenReturn(Optional.of(organization));
         OrganizationDTO result = organizationService.getOrganizationDTObyId("123abc");
         assertNotNull(result);
         verify(mockedOrganisationRepo).findById("123abc");
         assertEquals("Test Organization", result.name());
         assertEquals("https://testpage.com", result.homepage());
+        assertEquals("testemail", result.email());
+        assertEquals("testaddress", result.address());
     }
 
     @Test

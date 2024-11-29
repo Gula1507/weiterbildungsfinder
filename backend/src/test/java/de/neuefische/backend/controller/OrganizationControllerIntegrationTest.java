@@ -30,7 +30,8 @@ class OrganizationControllerIntegrationTest {
 
     @Test
     void getAllOrganizations_shouldReturnListOfOrganizations() throws Exception {
-        Organization organization = new Organization("1", "testname", "testhomepage");
+        Organization organization = new Organization("1", "testname", "testhomepage",
+                "testemail", "testaddress");
         organizationRepository.save(organization);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
                 .andExpect(status().isOk())
@@ -40,7 +41,9 @@ class OrganizationControllerIntegrationTest {
                                 {
                                   "id": "1",
                                   "name": "testname",
-                                  "homepage": "testhomepage"
+                                  "homepage": "testhomepage",
+                                  "email": "testemail",
+                                  "address": "testaddress"
                                 }
                                 ]
                                 """
@@ -91,18 +94,21 @@ class OrganizationControllerIntegrationTest {
 
     @Test
     void getOrganizationById_shouldReturnOrganizationDTO() throws Exception {
-        Organization organization = new Organization("123abc", "testname", "testpage");
+        Organization organization = new Organization("123abc", "testname", "testpage",
+                "testemail", "testaddress");
         organizationRepository.save(organization);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "123abc")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value("testname"))
-                .andExpect(jsonPath("$.homepage").value("testpage"));
+                .andExpect(jsonPath("$.homepage").value("testpage"))
+                .andExpect(jsonPath("$.email").value("testemail"))
+                .andExpect(jsonPath("$.address").value("testaddress"));
     }
 
     @Test
-    void getOrganizationById_shouldReturnNotFoundWhenOrganizationDoesNotExist() throws Exception {
+    void getOrganizationById_shouldReturnNotFound_whenOrganizationDoesNotExist() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "nonexistentId")
                         .accept(MediaType.APPLICATION_JSON))

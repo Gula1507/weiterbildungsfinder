@@ -27,4 +27,10 @@ public class OrganizationController {
     public Organization addOrganization(@Valid @RequestBody OrganizationDTO organizationDTO) {
         return organizationService.saveOrganizationFromDTO(organizationDTO);
     }
+
+    @GetMapping("/{id}")
+    public OrganizationDTO getOrganizationById(@PathVariable String id) {
+        return organizationService.getOrganizationDTObyId(id);
+    }
+
 }

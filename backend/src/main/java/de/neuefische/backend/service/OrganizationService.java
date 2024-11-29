@@ -38,7 +38,8 @@ public class OrganizationService {
 
     public Organization updateOrganizationFromDTO(String id, @Valid OrganizationDTO organizationDTO) {
         if (organizationRepo.existsById(id)) {
-            Organization updatedOrganization = new Organization(id, organizationDTO.name(), organizationDTO.homepage(), organizationDTO.email(),
+            Organization updatedOrganization = new Organization(id, organizationDTO.name(), organizationDTO.homepage(),
+                    organizationDTO.email(),
                     organizationDTO.address());
             return organizationRepo.save(updatedOrganization);
         } else throw new OrganizationNotFoundException(id);

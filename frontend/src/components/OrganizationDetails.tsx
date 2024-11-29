@@ -1,10 +1,11 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Organization} from "../types/Organization.ts";
 
 function OrganizationDetails() {
     const {id} = useParams();
+    const navigate = useNavigate();
     const [organization, setOrganization] = useState<Organization | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -47,6 +48,9 @@ function OrganizationDetails() {
             </p>
             <p>Email: {organization?.email}</p>
             <p>Adresse: {organization?.address}</p>
+            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
+                Bearbeiten
+            </button>
         </div>
     );
 }

@@ -1,10 +1,11 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Organization} from "../types/Organization.ts";
 
 function OrganizationDetails() {
     const {id} = useParams();
+    const navigate = useNavigate();
     const [organization, setOrganization] = useState<Organization | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -36,8 +37,20 @@ function OrganizationDetails() {
         <div>
             <h1>{organization?.name}</h1>
             <p>
-                Homepage: <a href={organization?.homepage}>{organization?.homepage}</a>
+                Webseite: <a
+                href={organization?.homepage?.startsWith('http') ? organization?.homepage
+                    : `http://${organization?.homepage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {organization?.homepage}
+            </a>
             </p>
+            <p>Email: {organization?.email}</p>
+            <p>Adresse: {organization?.address}</p>
+            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
+                Bearbeiten
+            </button>
         </div>
     );
 }

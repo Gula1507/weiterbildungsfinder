@@ -23,15 +23,18 @@ class OrganizationControllerIntegrationTest {
     @Autowired
     OrganizationRepository organizationRepository;
 
+    private Organization testOrganization;
+
     @BeforeEach
     void setUp() {
         organizationRepository.deleteAll();
+        testOrganization = new Organization("1", "testname", "testhomepage",
+                "testemail", "testaddress");
     }
 
     @Test
     void getAllOrganizations_shouldReturnListOfOrganizations() throws Exception {
-        Organization organization = new Organization("1", "testname", "testhomepage");
-        organizationRepository.save(organization);
+        organizationRepository.save(testOrganization);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(
@@ -40,7 +43,9 @@ class OrganizationControllerIntegrationTest {
                                 {
                                   "id": "1",
                                   "name": "testname",
-                                  "homepage": "testhomepage"
+                                  "homepage": "testhomepage",
+                                  "email": "testemail",
+                                  "address": "testaddress"
                                 }
                                 ]
                                 """
@@ -91,23 +96,76 @@ class OrganizationControllerIntegrationTest {
 
     @Test
     void getOrganizationById_shouldReturnOrganizationDTO() throws Exception {
-        Organization organization = new Organization("123abc", "testname", "testpage");
-        organizationRepository.save(organization);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "123abc")
+        organizationRepository.save(testOrganization);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value("testname"))
-                .andExpect(jsonPath("$.homepage").value("testpage"));
+                .andExpect(jsonPath("$.homepage").value("testhomepage"))
+                .andExpect(jsonPath("$.email").value("testemail"))
+                .andExpect(jsonPath("$.address").value("testaddress"));
     }
 
     @Test
-    void getOrganizationById_shouldReturnNotFoundWhenOrganizationDoesNotExist() throws Exception {
+    void getOrganizationById_shouldReturnNotFound_whenOrganizationDoesNotExist() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations/{id}", "nonexistentId")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message")
                         .value("Weiterbildungsanbieter mit id: nonexistentId nicht gefunden"));
+    }
+
+    @Test
+    void updateOrganization_shouldReturnOrganizationWithNewHomepage_whenHomepageUpdate() throws Exception {
+        organizationRepository.save(testOrganization);
+        String id = "1";
+        String requestBody = """
+                {
+                  "name": "testname",
+                  "homepage": "newhomepage",
+                  "email": "testemail",
+                  "address": "testaddress"
+                }
+                """;
+        String expectedResponseBody = """
+                {
+                  "name": "testname",
+                  "homepage": "newhomepage",
+                  "email": "testemail",
+                  "address": "testaddress"
+                }
+                """;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/organizations/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponseBody))
+                .andExpect(jsonPath("$.id").value(id));
+    }
+
+    @Test
+    void updateOrganization_shouldReturn404_whenOrganizationNotFound() throws Exception {
+
+        String nonExistingId = "999";
+        String requestBody = """
+                {
+                  "name": "testname",
+                  "homepage": "newhomepage",
+                  "email": "testemail",
+                  "address": "testaddress"
+                }
+                """;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/organizations/{id}", nonExistingId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message")
+                        .value("Weiterbildungsanbieter mit id: 999 nicht gefunden"));
     }
 }

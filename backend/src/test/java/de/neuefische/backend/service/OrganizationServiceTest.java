@@ -5,6 +5,7 @@ import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 import static org.bson.assertions.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class OrganizationServiceTest {
@@ -20,6 +22,15 @@ class OrganizationServiceTest {
     OrganizationRepository mockedOrganisationRepo = mock(OrganizationRepository.class);
     IdService mockedIdService = mock(IdService.class);
     OrganizationService organizationService = new OrganizationService(mockedOrganisationRepo, mockedIdService);
+    private Organization testOrganization;
+
+    @BeforeEach
+    void setUp() {
+
+        testOrganization = new Organization("1", "testname", "testhomepage",
+                "testemail", "testaddress");
+    }
+
 
     @Test
     void getAllOrganizations_returnsEmptyList_whenRepositoryIsEmpty() {
@@ -32,9 +43,9 @@ class OrganizationServiceTest {
 
     @Test
     void getAllOrganizations_shouldReturnAllInputOrganizations() {
-        Organization organization1 = new Organization("1", "testname1", "testhomepage1");
-        Organization organization2 = new Organization("2", "testname2", "testhomepage2");
-        List<Organization> expected = new ArrayList<>(List.of(organization1, organization2));
+        Organization testOrganization2 = new Organization("2", "testname2", "testhomepage2",
+                "testemail2", "testaddress2");
+        List<Organization> expected = new ArrayList<>(List.of(testOrganization, testOrganization2));
         when(mockedOrganisationRepo.findAll()).thenReturn(expected);
         List<Organization> actual = organizationService.getAllOrganizations();
         verify(mockedOrganisationRepo).findAll();
@@ -43,28 +54,29 @@ class OrganizationServiceTest {
 
     @Test
     void saveOrganizationFromDTO_shouldReturnOrganizationWithGeneratedId() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage");
-        Organization expected = new Organization("123", "testname", "testhomepage");
-        when(mockedOrganisationRepo.save(expected)).thenReturn(expected);
-        when(mockedIdService.generateRandomId()).thenReturn("123");
+        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage",
+                "testemail", "testaddress");
+        when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
+        when(mockedIdService.generateRandomId()).thenReturn("1");
 
         Organization organizationActual = organizationService.saveOrganizationFromDTO(organizationDTO);
-        verify(mockedOrganisationRepo).save(expected);
+        verify(mockedOrganisationRepo).save(testOrganization);
         verify(mockedIdService).generateRandomId();
 
-        assertEquals(expected, organizationActual);
+        assertEquals(testOrganization, organizationActual);
 
     }
 
     @Test
     void getOrganizationDTObyId_shouldReturnOrganizationDTO() {
-        Organization organization = new Organization("123abc", "Test Organization", "https://testpage.com");
-        when(mockedOrganisationRepo.findById("123abc")).thenReturn(Optional.of(organization));
-        OrganizationDTO result = organizationService.getOrganizationDTObyId("123abc");
+        when(mockedOrganisationRepo.findById("1")).thenReturn(Optional.of(testOrganization));
+        OrganizationDTO result = organizationService.getOrganizationDTObyId("1");
         assertNotNull(result);
-        verify(mockedOrganisationRepo).findById("123abc");
-        assertEquals("Test Organization", result.name());
-        assertEquals("https://testpage.com", result.homepage());
+        verify(mockedOrganisationRepo).findById("1");
+        assertEquals("testname", result.name());
+        assertEquals("testhomepage", result.homepage());
+        assertEquals("testemail", result.email());
+        assertEquals("testaddress", result.address());
     }
 
     @Test
@@ -72,7 +84,34 @@ class OrganizationServiceTest {
         when(mockedOrganisationRepo.findById("nonexistentId")).thenReturn(Optional.empty());
         Assertions.assertThrows(OrganizationNotFoundException.class, () ->
                 organizationService.getOrganizationDTObyId("nonexistentId"));
-
     }
 
+    @Test
+    void updateOrganizationFromDTO_shouldReturnUpdatedOrganization_whenOrganizationExists() {
+        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name",
+                "Updated Homepage", "updated@email.com", "Updated Address");
+        String id = "1";
+        Organization expectedOrganization = new Organization(id, "Updated Name", "Updated Homepage",
+                "updated@email.com", "Updated Address");
+        when(mockedOrganisationRepo.existsById(id)).thenReturn(true);
+        when(mockedOrganisationRepo.save(any(Organization.class))).thenReturn(expectedOrganization);
+
+        Organization actualOrganization = organizationService.updateOrganizationFromDTO(id, organizationDTO);
+
+        verify(mockedOrganisationRepo).existsById(id);
+        verify(mockedOrganisationRepo).save(any(Organization.class));
+        assertEquals(expectedOrganization, actualOrganization);
+    }
+
+    @Test
+    void updateOrganizationFromDTO_shouldThrowException_whenOrganizationNotExist() {
+        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name",
+                "Updated Homepage", "updated@email.com", "Updated Address");
+        String id = "999";
+        when(mockedOrganisationRepo.existsById(id)).thenReturn(false);
+
+        assertThrows(OrganizationNotFoundException.class, () ->
+                organizationService.updateOrganizationFromDTO(id, organizationDTO));
+        verify(mockedOrganisationRepo).existsById(id);
+    }
 }

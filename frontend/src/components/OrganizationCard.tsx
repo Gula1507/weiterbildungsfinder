@@ -11,7 +11,7 @@ function OrganizationCard(props: OrganizationPageProps) {
     const navigate = useNavigate();
 
     function switchToDetailsPage() {
-        navigate(`api/organizations/${props.organization.id}`);
+        navigate(`organizations/${props.organization.id}`);
     }
 
     return (

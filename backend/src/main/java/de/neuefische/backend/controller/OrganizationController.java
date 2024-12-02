@@ -33,4 +33,8 @@ public class OrganizationController {
         return organizationService.getOrganizationDTObyId(id);
     }
 
+    @PutMapping("/{id}")
+    public Organization updateOrganization(@PathVariable String id, @Valid @RequestBody OrganizationDTO organizationDTO) {
+        return organizationService.updateOrganizationFromDTO(id, organizationDTO);
+    }
 }

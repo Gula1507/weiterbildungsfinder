@@ -5,5 +5,4 @@ export type Organization =
             homepage: string,
             email: string,
             address: string,
-
     }

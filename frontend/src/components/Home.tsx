@@ -1,19 +1,25 @@
 import {Organization} from "../types/Organization.ts";
 import OrganizationGallery from "./OrganizationGallery.tsx";
 import "../styles/Home.css"
-import AddOrganization from "./AddOrganization.tsx";
+import {useNavigate} from "react-router-dom";
 
 type HomeProps = {
     organizations: Organization[]
 }
 
 function Home(props: HomeProps) {
+
+    const navigate = useNavigate();
+
+    const handleAddOrganization = () => {
+        navigate("add-organization")
+    }
     return (
         <>
-            <AddOrganization/>
-        <div className="home-container">
-            <OrganizationGallery organizations={props.organizations}/>
-        </div>
+            <button onClick={handleAddOrganization}>Weiterbildungsanbieter hinzufügen</button>
+            <div className="home-container">
+                <OrganizationGallery organizations={props.organizations}/>
+            </div>
         </>
     );
 }

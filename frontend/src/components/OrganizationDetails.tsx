@@ -40,7 +40,7 @@ function OrganizationDetails() {
         }
         axios.delete(`/api/organizations/${id}`)
             .then(() => {
-                setDeleteSuccess(true); // Setze Erfolg auf true
+                setDeleteSuccess(true);
                 setTimeout(() => {
                     setDeleteSuccess(false);
                     navigate('/');
@@ -67,7 +67,8 @@ function OrganizationDetails() {
             </p>
             <p>Email: {organization?.email}</p>
             <p>Adresse: {organization?.address}</p>
-            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
+            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}
+                    className="edit-button">
                 Bearbeiten
             </button>
             <button onClick={deleteOrganization} className="delete-button">Löschen</button>

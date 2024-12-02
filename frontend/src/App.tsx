@@ -6,6 +6,7 @@ import {Organization} from "./types/Organization.ts";
 import Home from "./components/Home.tsx";
 import OrganizationForm from "./components/OrganizationForm.tsx";
 import OrganizationDetails from "./components/OrganizationDetails.tsx";
+import Header from "./components/Header.tsx";
 
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
 
     return (
         <div className="app-container">
-
+            <Header/>
         <Routes>
             <Route path="/" element={<Home organizations={organizations}/>}/>
             <Route path="/add-organization" element={<OrganizationForm/>}/>

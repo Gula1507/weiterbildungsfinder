@@ -9,6 +9,7 @@ function OrganizationDetails() {
     const [organization, setOrganization] = useState<Organization | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [deleteSuccess, setDeleteSuccess] = useState(false);
 
     useEffect(() => {
 
@@ -32,6 +33,24 @@ function OrganizationDetails() {
 
     if (error) return <p>Error loading organization: {error}</p>;
 
+    function deleteOrganization() {
+        const userConfirmed = window.confirm("Sind Sie sicher, dass Sie diesen Anbieter löschen möchten?");
+        if (!userConfirmed) {
+            return;
+        }
+        axios.delete(`/api/organizations/${id}`)
+            .then(() => {
+                setDeleteSuccess(true); // Setze Erfolg auf true
+                setTimeout(() => {
+                    setDeleteSuccess(false);
+                    navigate('/');
+                    window.location.reload();
+                }, 3000);
+            })
+            .catch((err) => {
+                setError((err as Error).message || 'An error occurred while deleting the organization');
+            });
+    }
 
     return (
         <div>
@@ -51,6 +70,10 @@ function OrganizationDetails() {
             <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
                 Bearbeiten
             </button>
+            <button onClick={deleteOrganization} className="delete-button">Löschen</button>
+            {deleteSuccess && (
+                <p className="success-message">Der Anbieter wurde gelöscht! Weiterleitung auf die Startseite...</p>
+            )}
         </div>
     );
 }

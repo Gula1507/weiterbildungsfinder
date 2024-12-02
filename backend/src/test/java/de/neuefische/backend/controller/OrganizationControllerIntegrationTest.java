@@ -2,6 +2,7 @@ package de.neuefische.backend.controller;
 
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.repository.OrganizationRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,5 +168,19 @@ class OrganizationControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message")
                         .value("Weiterbildungsanbieter mit id: 999 nicht gefunden"));
+    }
+
+    @Test
+    void deleteOrganization_whenExists_shouldReturnNoContent() throws Exception {
+        organizationRepository.save(testOrganization);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/organizations/1"))
+                .andExpect(status().isNoContent());
+        Assertions.assertFalse(organizationRepository.existsById(testOrganization.id()));
+    }
+
+    @Test
+    void deleteOrganization_shouldReturn404_ifOrganizationNotExists() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/organizations/2"))
+                .andExpect(status().isNotFound());
     }
 }

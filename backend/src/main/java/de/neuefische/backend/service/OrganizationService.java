@@ -44,5 +44,13 @@ public class OrganizationService {
             return organizationRepo.save(updatedOrganization);
         } else throw new OrganizationNotFoundException(id);
     }
+
+    public void deleteOrganizationById(String id) {
+        if (!organizationRepo.existsById(id)) {
+            throw new OrganizationNotFoundException(id);
+        } else {
+            organizationRepo.deleteById(id);
+        }
+    }
 }
 

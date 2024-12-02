@@ -37,4 +37,10 @@ public class OrganizationController {
     public Organization updateOrganization(@PathVariable String id, @Valid @RequestBody OrganizationDTO organizationDTO) {
         return organizationService.updateOrganizationFromDTO(id, organizationDTO);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void deleteOrganization(@PathVariable String id) {
+        organizationService.deleteOrganizationById(id);
+    }
 }

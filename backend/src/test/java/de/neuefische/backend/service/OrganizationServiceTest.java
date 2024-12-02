@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.bson.assertions.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class OrganizationServiceTest {
@@ -114,4 +113,22 @@ class OrganizationServiceTest {
                 organizationService.updateOrganizationFromDTO(id, organizationDTO));
         verify(mockedOrganisationRepo).existsById(id);
     }
+
+    @Test
+    void deleteById_shouldThrowException_whenOrganizationNotExist() {
+        when(mockedOrganisationRepo.existsById("999")).thenReturn(false);
+        assertThrows(OrganizationNotFoundException.class, () -> organizationService.deleteOrganizationById("999"));
+        verify(mockedOrganisationRepo).existsById("999");
+    }
+
+    @Test
+    void deleteById_shouldDeleteOrganization_whenExists() {
+        when(mockedOrganisationRepo.existsById("1")).thenReturn(true);
+        organizationService.deleteOrganizationById("1");
+        verify(mockedOrganisationRepo).deleteById("1");
+        when(mockedOrganisationRepo.existsById("1")).thenReturn(false);
+        assertFalse(mockedOrganisationRepo.existsById("1"));
+
+    }
+
 }

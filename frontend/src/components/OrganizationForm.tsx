@@ -1,6 +1,6 @@
 import axios from "axios";
 import {useEffect, useState} from "react";
-import "../styles/NewOrganization.css"
+import "../styles/OrganizationForm.css"
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {Organization} from "../types/Organization";
 

@@ -1,7 +1,7 @@
 import {Organization} from "../types/Organization.ts";
 import OrganizationGallery from "./OrganizationGallery.tsx";
 import "../styles/Home.css"
-import Header from "./Header.tsx";
+import AddOrganization from "./AddOrganization.tsx";
 
 type HomeProps = {
     organizations: Organization[]
@@ -10,7 +10,7 @@ type HomeProps = {
 function Home(props: HomeProps) {
     return (
         <>
-            <Header/>
+            <AddOrganization/>
         <div className="home-container">
             <OrganizationGallery organizations={props.organizations}/>
         </div>

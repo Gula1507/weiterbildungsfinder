@@ -67,8 +67,7 @@ function OrganizationDetails() {
             </p>
             <p>Email: {organization?.email}</p>
             <p>Adresse: {organization?.address}</p>
-            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}
-                    className="edit-button">
+            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
                 Bearbeiten
             </button>
             <button onClick={deleteOrganization} className="delete-button">Löschen</button>

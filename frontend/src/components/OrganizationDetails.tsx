@@ -40,7 +40,7 @@ function OrganizationDetails() {
         }
         axios.delete(`/api/organizations/${id}`)
             .then(() => {
-                setDeleteSuccess(true); // Setze Erfolg auf true
+                setDeleteSuccess(true);
                 setTimeout(() => {
                     setDeleteSuccess(false);
                     navigate('/');

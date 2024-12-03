@@ -23,7 +23,24 @@ function Home(props: HomeProps) {
 
     return (
         <>
-            <button onClick={handleAddOrganization}>Weiterbildungsanbieter hinzufügen</button>
+
+            <div className="slogan-container">
+                <img
+                    className="small-image"
+                    src="/images/pictures.png"
+                    alt="Suchender Geschäftsmann auf dem Schiff"
+                />
+                <div className="slogan">
+                    <h2>Entdecke KURSDA</h2>
+                    <p>
+                        Finde heraus, welche Weiterbildungsmöglichkeiten es in deiner Region gibt – übersichtlich und
+                        einfach.
+                        Hol dir neue Fähigkeiten, bleib motiviert und gestalte deine Zukunft aktiv – jetzt und für die
+                        kommenden Jahre.
+                    </p>
+                </div>
+            </div>
+
             <div className="home-container">
                 <input
                     type="text"

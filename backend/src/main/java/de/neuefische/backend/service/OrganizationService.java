@@ -1,5 +1,7 @@
 package de.neuefische.backend.service;
 
+import de.neuefische.backend.api.dto.ApiResponseOrganization;
+import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.exception.OrganizationNotFoundException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
@@ -16,9 +18,14 @@ public class OrganizationService {
 
     private final OrganizationRepository organizationRepo;
     private final IdService idService;
+    private final ArbeitsagenturApiService apiService;
 
     public List<Organization> getAllOrganizations() {
         return organizationRepo.findAll();
+    }
+
+    public List<ApiResponseOrganization> getOrganizationsFromApi() {
+        return apiService.loadAllOrganizations();
     }
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {

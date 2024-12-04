@@ -31,7 +31,8 @@ public class ArbeitsagenturApiService {
                 .orElseThrow(ApiResponseException::new);
 
         return details.stream().map(ApiResponseDetails::courseOffer)
-                .map(ApiResponseCourseOffer::apiResponseOrganization).toList();
+                .map(ApiResponseCourseOffer::apiResponseOrganization).distinct().toList();
+
 
     }
 }

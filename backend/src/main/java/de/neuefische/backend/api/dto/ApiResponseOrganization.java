@@ -2,6 +2,8 @@ package de.neuefische.backend.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public record ApiResponseOrganization(
         Long id,
         String name,
@@ -11,4 +13,16 @@ public record ApiResponseOrganization(
         ApiResponseAddress address
 
 ) {
+        @Override
+        public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                ApiResponseOrganization that = (ApiResponseOrganization) o;
+                return Objects.equals(name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+                return Objects.hashCode(name);
+        }
 }

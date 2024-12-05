@@ -1,6 +1,5 @@
 package de.neuefische.backend.controller;
 
-import de.neuefische.backend.api.dto.ApiResponseOrganization;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.service.OrganizationService;
@@ -19,8 +18,8 @@ public class OrganizationController {
     private final OrganizationService organizationService;
 
     @GetMapping
-    public List<ApiResponseOrganization> getAllOrganizations() {
-        return organizationService.getOrganizationsFromApi();
+    public List<Organization> getAllOrganizations() {
+        return organizationService.getAllOrganizations();
     }
 
     @ResponseStatus(HttpStatus.CREATED)

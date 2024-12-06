@@ -1,6 +1,9 @@
 package de.neuefische.backend.api.service;
 
-import de.neuefische.backend.api.dto.*;
+import de.neuefische.backend.api.dto.ApiResponse;
+import de.neuefische.backend.api.dto.ApiResponseCourseOffer;
+import de.neuefische.backend.api.dto.ApiResponseDetails;
+import de.neuefische.backend.api.dto.ApiResponseOrganization;
 import de.neuefische.backend.api.exception.ApiResponseException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.service.IdService;
@@ -9,16 +12,18 @@ import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class ArbeitsagenturApiService {
 
     private final RestClient restClient;
+    private final IdService idService;
 
     public ArbeitsagenturApiService(RestClient.Builder builder) {
         this.restClient =
                 builder.baseUrl("https://rest.arbeitsagentur.de/infosysbub/wbsuche/pc/v2/bildungsangebot").build();
+        this.idService = new IdService();
     }
 
     public List<Organization> loadAllOrganizations() {
@@ -26,31 +31,38 @@ public class ArbeitsagenturApiService {
         String urlPage = "?page=0&size=20";
 
         while (urlPage != null) {
-            Optional<ApiResponse> optionalResponse =
-                    Optional.ofNullable(restClient.get().uri(urlPage).header("X-API" + "-Key", "infosysbub-wbsuche").retrieve().body(ApiResponse.class));
-            ApiResponse response = optionalResponse.orElse(null);
-            urlPage = getNextPageUrl(response);
+            try {
+                ApiResponse response =
+                        restClient.get().uri(urlPage).header("X-API-Key", "infosysbub-wbsuche").retrieve().body(ApiResponse.class);
 
-            List<ApiResponseDetails> details =
-                    optionalResponse.map(ApiResponse::responseContent).map(ApiResponseContent::details).orElseThrow(ApiResponseException::new);
+                if (response == null || response.responseContent() == null || response.responseContent().details() == null) {
+                    System.out.println("Fehler: responseContent ist null für die Seite " + urlPage);
+                    break;
+                }
 
-            List<ApiResponseOrganization> apiResponseOrganizations =
-                    details.stream().map(ApiResponseDetails::courseOffer).map(ApiResponseCourseOffer::apiResponseOrganization).distinct().toList();
-            apiOrganizations.addAll(getOrganizations(apiResponseOrganizations));
+                List<ApiResponseDetails> details = response.responseContent().details();
 
+                List<ApiResponseOrganization> apiResponseOrganizations =
+                        details.stream().map(ApiResponseDetails::courseOffer).map(ApiResponseCourseOffer::apiResponseOrganization).distinct().toList();
+
+                apiOrganizations.addAll(getOrganizations(apiResponseOrganizations));
+                urlPage = getNextPageUrl(response);
+            } catch (ApiResponseException e) {
+                System.out.println("Fehler beim Abrufen der Seite: " + urlPage + "-" + e.getMessage());
+            }
         }
-        return apiOrganizations.stream().distinct().toList();
 
+        return apiOrganizations.stream().distinct().toList();
     }
 
-    private List<Organization> getOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
-        IdService idService = new IdService();
+    public List<Organization> getOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
+
         return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.name(),
                 a.homepage(), a.email(),
                 a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city() + ", " + a.address().streetAndHomeNumber())).toList();
     }
 
-    private String getNextPageUrl(ApiResponse apiResponse) {
+    public String getNextPageUrl(ApiResponse apiResponse) {
         if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < 10) {
             return "?page=" + (apiResponse.page().number() + 1) + "&size=20";
         }

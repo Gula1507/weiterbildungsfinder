@@ -11,14 +11,18 @@ import Header from "./components/Header.tsx";
 
 function App() {
     const [organizations, setOrganizations] = useState<Organization[]>([])
+    const [loading, setLoading] = useState<boolean>(true);
 
     const loadOrganizations = () => {
+        setLoading(true);
         axios.get("/api/organizations").then((response) => {
-                setOrganizations(response.data)
+            setOrganizations(response.data);
+            setLoading(false);
             }
         )
             .catch((error) => {
-                console.error(error)
+                console.error(error);
+                setLoading(false);
             })
     }
     useEffect(() => {
@@ -28,12 +32,16 @@ function App() {
     return (
         <div className="app-container">
             <Header/>
-        <Routes>
-            <Route path="/" element={<Home organizations={organizations}/>}/>
-            <Route path="/add-organization" element={<OrganizationForm/>}/>
-            <Route path="/edit-organization/:id" element={<OrganizationForm/>}/>
-            <Route path="/organizations/:id" element={<OrganizationDetails/>}/>
-        </Routes>
+            <Routes>
+                <Route
+                    path="/"
+                    element={<Home organizations={organizations} loading={loading}/>}
+
+                />
+                <Route path="/add-organization" element={<OrganizationForm/>}/>
+                <Route path="/edit-organization/:id" element={<OrganizationForm/>}/>
+                <Route path="/organizations/:id" element={<OrganizationDetails/>}/>
+            </Routes>
         </div>
     )
 }

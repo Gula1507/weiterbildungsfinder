@@ -1,5 +1,6 @@
 package de.neuefische.backend.service;
 
+import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.exception.OrganizationNotFoundException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
@@ -20,41 +21,51 @@ class OrganizationServiceTest {
 
     OrganizationRepository mockedOrganisationRepo = mock(OrganizationRepository.class);
     IdService mockedIdService = mock(IdService.class);
-    OrganizationService organizationService = new OrganizationService(mockedOrganisationRepo, mockedIdService);
+    ArbeitsagenturApiService mockedApiService = mock(ArbeitsagenturApiService.class);
+    OrganizationService organizationService = new OrganizationService(mockedOrganisationRepo, mockedIdService,
+            mockedApiService);
     private Organization testOrganization;
 
     @BeforeEach
     void setUp() {
 
-        testOrganization = new Organization("1", "testname", "testhomepage",
-                "testemail", "testaddress");
+        testOrganization = new Organization("1", "testname", "testhomepage", "testemail", "testaddress");
     }
 
 
     @Test
-    void getAllOrganizations_returnsEmptyList_whenRepositoryIsEmpty() {
+    void getAllOrganizations_returnsEmptyList_whenRepositoryAndApiHaveNoOrganizations() {
         List<Organization> expected = List.of();
         when(mockedOrganisationRepo.findAll()).thenReturn((List.of()));
+        when(mockedApiService.loadAllOrganizations()).thenReturn((List.of()));
         List<Organization> actual = organizationService.getAllOrganizations();
         verify(mockedOrganisationRepo).findAll();
+        verify(mockedApiService).loadAllOrganizations();
         assertEquals(expected, actual);
     }
 
     @Test
-    void getAllOrganizations_shouldReturnAllInputOrganizations() {
-        Organization testOrganization2 = new Organization("2", "testname2", "testhomepage2",
-                "testemail2", "testaddress2");
-        List<Organization> expected = new ArrayList<>(List.of(testOrganization, testOrganization2));
-        when(mockedOrganisationRepo.findAll()).thenReturn(expected);
+    void getAllOrganizations_shouldReturnAllOrganizationsFromApiAndRepository() {
+        Organization testOrganization2 = new Organization("2", "testname2", "testhomepage2", "testemail2",
+                "testaddress2");
+        List<Organization> repoOrganizations = new ArrayList<>(List.of(testOrganization));
+        List<Organization> apiOrganizations = new ArrayList<>(List.of(testOrganization2));
+        List<Organization> expected = new ArrayList<>();
+        expected.addAll(repoOrganizations);
+        expected.addAll(apiOrganizations);
+
+        when(mockedOrganisationRepo.findAll()).thenReturn(repoOrganizations);
+        when(mockedApiService.loadAllOrganizations()).thenReturn(apiOrganizations);
+
         List<Organization> actual = organizationService.getAllOrganizations();
         verify(mockedOrganisationRepo).findAll();
+        verify(mockedApiService).loadAllOrganizations();
         assertEquals(expected, actual);
     }
 
     @Test
     void saveOrganizationFromDTO_shouldReturnOrganizationWithGeneratedId() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage",
-                "testemail", "testaddress");
+        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage", "testemail", "testaddress");
         when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
         when(mockedIdService.generateRandomId()).thenReturn("1");
 
@@ -81,17 +92,16 @@ class OrganizationServiceTest {
     @Test
     void getOrganizationById_shouldThrowOrganizationNotFoundException() {
         when(mockedOrganisationRepo.findById("nonexistentId")).thenReturn(Optional.empty());
-        Assertions.assertThrows(OrganizationNotFoundException.class, () ->
-                organizationService.getOrganizationDTObyId("nonexistentId"));
+        Assertions.assertThrows(OrganizationNotFoundException.class,
+                () -> organizationService.getOrganizationDTObyId("nonexistentId"));
     }
 
     @Test
     void updateOrganizationFromDTO_shouldReturnUpdatedOrganization_whenOrganizationExists() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name",
-                "Updated Homepage", "updated@email.com", "Updated Address");
+        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name", "Updated Homepage", "updated@email.com"
+                , "Updated Address");
         String id = "1";
-        Organization expectedOrganization = new Organization(id, "Updated Name", "Updated Homepage",
-                "updated@email.com", "Updated Address");
+        Organization expectedOrganization = new Organization(id, "Updated Name", "Updated Homepage", "updated@email" + ".com", "Updated" + " Address");
         when(mockedOrganisationRepo.existsById(id)).thenReturn(true);
         when(mockedOrganisationRepo.save(any(Organization.class))).thenReturn(expectedOrganization);
 
@@ -104,13 +114,13 @@ class OrganizationServiceTest {
 
     @Test
     void updateOrganizationFromDTO_shouldThrowException_whenOrganizationNotExist() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name",
-                "Updated Homepage", "updated@email.com", "Updated Address");
+        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name", "Updated Homepage", "updated@email.com"
+                , "Updated Address");
         String id = "999";
         when(mockedOrganisationRepo.existsById(id)).thenReturn(false);
 
-        assertThrows(OrganizationNotFoundException.class, () ->
-                organizationService.updateOrganizationFromDTO(id, organizationDTO));
+        assertThrows(OrganizationNotFoundException.class, () -> organizationService.updateOrganizationFromDTO(id,
+                organizationDTO));
         verify(mockedOrganisationRepo).existsById(id);
     }
 

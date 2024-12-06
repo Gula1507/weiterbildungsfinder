@@ -47,8 +47,8 @@ public class ArbeitsagenturApiService {
 
                 apiOrganizations.addAll(getOrganizations(apiResponseOrganizations));
                 urlPage = getNextPageUrl(response);
-            } catch (ApiResponseException e) {
-                System.out.println("Fehler beim Abrufen der Seite: " + urlPage + "-" + e.getMessage());
+            } catch (Exception e) {
+                throw new ApiResponseException();
             }
         }
 

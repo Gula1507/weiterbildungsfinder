@@ -67,4 +67,14 @@ class ArbeitsagenturApiServiceTest {
         String nextPageUrl = apiService.getNextPageUrl(apiResponse);
         assertEquals("?page=6&size=20", nextPageUrl);
     }
+
+    @Test
+    void getNextPageUrl_returnsNull_whenResponseIsNull() {
+
+        ApiResponse apiResponse = null;
+
+        String result = apiService.getNextPageUrl(apiResponse);
+
+        assertNull(result);
+    }
 }

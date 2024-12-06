@@ -71,8 +71,7 @@ class ArbeitsagenturApiServiceIntegrationTest {
         server.expect(requestTo("https://rest.arbeitsagentur.de/infosysbub/wbsuche/pc/v2/bildungsangebot?page=0&size" +
                                 "=20")).andExpect(method(HttpMethod.GET)).andRespond(withServerError());
 
-        org.junit.jupiter.api.Assertions.assertThrows(ApiResponseException.class,
-                () -> apiService.loadAllOrganizations());
+        org.junit.jupiter.api.Assertions.assertThrows(ApiResponseException.class, apiService::loadAllOrganizations);
 
         server.verify();
     }

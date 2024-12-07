@@ -2,6 +2,7 @@ package de.neuefische.backend.api.service;
 
 import de.neuefische.backend.api.exception.ApiResponseException;
 import de.neuefische.backend.model.Organization;
+import de.neuefische.backend.service.IdService;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -17,9 +18,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 class ArbeitsagenturApiServiceIntegrationTest {
 
+    private final IdService idService = new IdService();
     private final RestClient.Builder builder = RestClient.builder();
     private final MockRestServiceServer server = MockRestServiceServer.bindTo(builder).build();
-    private final ArbeitsagenturApiService apiService = new ArbeitsagenturApiService(builder);
+    private final ArbeitsagenturApiService apiService = new ArbeitsagenturApiService(builder, idService);
 
     @Test
     void loadAllOrganizations_shouldReturnOrganizationsFromApi() {

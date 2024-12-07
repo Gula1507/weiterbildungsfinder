@@ -2,6 +2,7 @@ package de.neuefische.backend.api.service;
 
 import de.neuefische.backend.api.dto.*;
 import de.neuefische.backend.model.Organization;
+import de.neuefische.backend.service.IdService;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClient;
 
@@ -15,7 +16,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ArbeitsagenturApiServiceTest {
-    ArbeitsagenturApiService apiService = new ArbeitsagenturApiService(RestClient.builder());
+    IdService idService = new IdService();
+    ArbeitsagenturApiService apiService = new ArbeitsagenturApiService(RestClient.builder(), idService);
 
     @Test
     void getOrganizations_returnsEmptyList_whenNoApiResponseOrganization() {

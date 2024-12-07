@@ -20,10 +20,10 @@ public class ArbeitsagenturApiService {
     private final RestClient restClient;
     private final IdService idService;
 
-    public ArbeitsagenturApiService(RestClient.Builder builder) {
+    public ArbeitsagenturApiService(RestClient.Builder builder, IdService idService) {
         this.restClient =
                 builder.baseUrl("https://rest.arbeitsagentur.de/infosysbub/wbsuche/pc/v2/bildungsangebot").build();
-        this.idService = new IdService();
+        this.idService = idService;
     }
 
     public List<Organization> loadAllOrganizations() {

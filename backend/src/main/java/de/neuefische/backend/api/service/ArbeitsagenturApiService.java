@@ -7,6 +7,8 @@ import de.neuefische.backend.api.dto.ApiResponseOrganization;
 import de.neuefische.backend.api.exception.ApiResponseException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.service.IdService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -19,6 +21,7 @@ public class ArbeitsagenturApiService {
 
     private final RestClient restClient;
     private final IdService idService;
+    private static final Logger logger = LoggerFactory.getLogger(ArbeitsagenturApiService.class);
 
     public ArbeitsagenturApiService(RestClient.Builder builder, IdService idService) {
         this.restClient =
@@ -36,7 +39,7 @@ public class ArbeitsagenturApiService {
                         restClient.get().uri(urlPage).header("X-API-Key", "infosysbub-wbsuche").retrieve().body(ApiResponse.class);
 
                 if (response == null || response.responseContent() == null || response.responseContent().details() == null) {
-                    System.out.println("Fehler: responseContent ist null für die Seite " + urlPage);
+                    logger.error("Fehler: responseContent ist null für die Seite {}", urlPage);
                     break;
                 }
 

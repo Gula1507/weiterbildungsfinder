@@ -45,7 +45,7 @@ public class ArbeitsagenturApiService {
                 List<ApiResponseOrganization> apiResponseOrganizations =
                         details.stream().map(ApiResponseDetails::courseOffer).map(ApiResponseCourseOffer::apiResponseOrganization).distinct().toList();
 
-                apiOrganizations.addAll(getOrganizations(apiResponseOrganizations));
+                apiOrganizations.addAll(convertApiOrganizationsToOrganizations(apiResponseOrganizations));
                 urlPage = getNextPageUrl(response);
             } catch (Exception e) {
                 throw new ApiResponseException();
@@ -55,7 +55,7 @@ public class ArbeitsagenturApiService {
         return apiOrganizations.stream().distinct().toList();
     }
 
-    public List<Organization> getOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
+    public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
 
         return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.name(),
                 a.homepage(), a.email(),

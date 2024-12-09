@@ -1,5 +1,6 @@
 package de.neuefische.backend.service;
 
+import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.exception.OrganizationNotFoundException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,9 +18,13 @@ public class OrganizationService {
 
     private final OrganizationRepository organizationRepo;
     private final IdService idService;
+    private final ArbeitsagenturApiService apiService;
 
     public List<Organization> getAllOrganizations() {
-        return organizationRepo.findAll();
+        List<Organization> allOrganizations = new ArrayList<>();
+        allOrganizations.addAll(organizationRepo.findAll());
+        allOrganizations.addAll(apiService.loadAllOrganizations());
+        return allOrganizations;
     }
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {

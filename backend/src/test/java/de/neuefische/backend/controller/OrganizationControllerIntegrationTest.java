@@ -1,5 +1,6 @@
 package de.neuefische.backend.controller;
 
+import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.repository.OrganizationRepository;
 import org.junit.jupiter.api.Assertions;
@@ -8,11 +9,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Collections;
+import java.util.List;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -23,6 +30,9 @@ class OrganizationControllerIntegrationTest {
 
     @Autowired
     OrganizationRepository organizationRepository;
+
+    @MockBean
+    ArbeitsagenturApiService mockedApiService;
 
     private Organization testOrganization;
 
@@ -35,29 +45,44 @@ class OrganizationControllerIntegrationTest {
 
     @Test
     void getAllOrganizations_shouldReturnListOfOrganizations() throws Exception {
+        List<Organization> apiOrganizations = List.of(new Organization("2", "apiOrganization", "apiHomepage",
+                "apiEmail", "apiAddress"));
         organizationRepository.save(testOrganization);
+
+        when(mockedApiService.loadAllOrganizations()).thenReturn(apiOrganizations);
+
+
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(
-                        """
-                                [
+                .andExpect(status().isOk()).andExpect(content().json("""
+                            [
                                 {
-                                  "id": "1",
-                                  "name": "testname",
-                                  "homepage": "testhomepage",
-                                  "email": "testemail",
-                                  "address": "testaddress"
+                                    "id": "1",
+                                    "name": "testname",
+                                    "homepage": "testhomepage",
+                                    "email": "testemail",
+                                    "address": "testaddress"
+                                },
+                                {
+                                    "id": "2",
+                                    "name": "apiOrganization",
+                                    "homepage": "apiHomepage",
+                                    "email": "apiEmail",
+                                    "address": "apiAddress"
                                 }
-                                ]
-                                """
-                ));
+                            ]
+                        """));
+
     }
 
+
     @Test
-    void getAllOrganizations_shouldReturnEmptyListIntegrationTest() throws Exception {
+    void getAllOrganizations_shouldReturnEmptyListWhenNoOrganisations() throws Exception {
+        organizationRepository.deleteAll();
+        List<Organization> emptyApiResponse = Collections.emptyList();
+        when(mockedApiService.loadAllOrganizations()).thenReturn(emptyApiResponse);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("[]"));
+                .andExpect(status().isOk()).andExpect(content().json("[]"));
     }
 
 

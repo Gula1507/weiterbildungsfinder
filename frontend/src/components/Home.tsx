@@ -6,6 +6,8 @@ import {useState} from "react";
 
 type HomeProps = {
     organizations: Organization[]
+    loading: boolean
+
 }
 
 function Home(props: HomeProps) {
@@ -42,6 +44,10 @@ function Home(props: HomeProps) {
             </div>
 
             <div className="home-container">
+                {props.loading ? (
+                    <div className="loading-indicator">Lade Weiterbildungsanbieter...</div>
+                ) : (
+                    <>
                 <input
                     type="text"
                     onChange={(e) => setSearchText(e.target.value)}
@@ -56,6 +62,8 @@ function Home(props: HomeProps) {
                 <button className="add" onClick={handleAddOrganization}>
                     + NEU
                 </button>
+                    </>
+                )}
             </div>
         </>
     );

@@ -2,6 +2,7 @@ package de.neuefische.backend.api.service;
 
 import de.neuefische.backend.api.dto.*;
 import de.neuefische.backend.model.Organization;
+import de.neuefische.backend.service.IdService;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClient;
 
@@ -15,18 +16,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ArbeitsagenturApiServiceTest {
-    ArbeitsagenturApiService apiService = new ArbeitsagenturApiService(RestClient.builder());
+    IdService idService = new IdService();
+    ArbeitsagenturApiService apiService = new ArbeitsagenturApiService(RestClient.builder(), idService);
 
     @Test
-    void getOrganizations_returnsEmptyList_whenNoApiResponseOrganization() {
+    void convertApiOrganizationsToOrganizations_returnsEmptyList_whenNoApiResponseOrganization() {
         List<ApiResponseOrganization> apiResponseOrganizations = List.of();
 
-        List<Organization> organizations = apiService.getOrganizations(apiResponseOrganizations);
+        List<Organization> organizations = apiService.convertApiOrganizationsToOrganizations(apiResponseOrganizations);
         assertTrue(organizations.isEmpty());
     }
 
     @Test
-    void getOrganizations_returnsList_whenApiResponseOrganizationsAreProvided() {
+    void convertApiOrganizationsToOrganizations_returnsList_whenApiResponseOrganizationsAreProvided() {
         ApiResponseAddressDetails addressDetails = new ApiResponseAddressDetails("99084", "Erfurt");
         ApiResponseAddress address = new ApiResponseAddress("Juri-Gagarin-Ring 152", addressDetails);
 
@@ -36,12 +38,12 @@ class ArbeitsagenturApiServiceTest {
 
         List<ApiResponseOrganization> apiResponseOrganizations = List.of(apiResponseOrganization);
 
-        List<Organization> organizations = apiService.getOrganizations(apiResponseOrganizations);
+        List<Organization> organizations = apiService.convertApiOrganizationsToOrganizations(apiResponseOrganizations);
 
         assertNotNull(organizations);
         assertEquals(1, organizations.size());
         assertEquals("Test Organization", organizations.getFirst().name());
-        assertEquals("99084 Erfurt, Juri-Gagarin-Ring 152", organizations.getFirst().address());
+        assertEquals("Juri-Gagarin-Ring 152, 99084 Erfurt", organizations.getFirst().address());
 
     }
 

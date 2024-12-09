@@ -7,6 +7,8 @@ import de.neuefische.backend.api.dto.ApiResponseOrganization;
 import de.neuefische.backend.api.exception.ApiResponseException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.service.IdService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -19,11 +21,12 @@ public class ArbeitsagenturApiService {
 
     private final RestClient restClient;
     private final IdService idService;
+    private static final Logger logger = LoggerFactory.getLogger(ArbeitsagenturApiService.class);
 
-    public ArbeitsagenturApiService(RestClient.Builder builder) {
+    public ArbeitsagenturApiService(RestClient.Builder builder, IdService idService) {
         this.restClient =
                 builder.baseUrl("https://rest.arbeitsagentur.de/infosysbub/wbsuche/pc/v2/bildungsangebot").build();
-        this.idService = new IdService();
+        this.idService = idService;
     }
 
     public List<Organization> loadAllOrganizations() {
@@ -36,7 +39,7 @@ public class ArbeitsagenturApiService {
                         restClient.get().uri(urlPage).header("X-API-Key", "infosysbub-wbsuche").retrieve().body(ApiResponse.class);
 
                 if (response == null || response.responseContent() == null || response.responseContent().details() == null) {
-                    System.out.println("Fehler: responseContent ist null für die Seite " + urlPage);
+                    logger.error("Fehler: responseContent ist null für die Seite {}", urlPage);
                     break;
                 }
 
@@ -45,7 +48,7 @@ public class ArbeitsagenturApiService {
                 List<ApiResponseOrganization> apiResponseOrganizations =
                         details.stream().map(ApiResponseDetails::courseOffer).map(ApiResponseCourseOffer::apiResponseOrganization).distinct().toList();
 
-                apiOrganizations.addAll(getOrganizations(apiResponseOrganizations));
+                apiOrganizations.addAll(convertApiOrganizationsToOrganizations(apiResponseOrganizations));
                 urlPage = getNextPageUrl(response);
             } catch (Exception e) {
                 throw new ApiResponseException();
@@ -55,11 +58,10 @@ public class ArbeitsagenturApiService {
         return apiOrganizations.stream().distinct().toList();
     }
 
-    public List<Organization> getOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
+    public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
 
         return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.name(),
-                a.homepage(), a.email(),
-                a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city() + ", " + a.address().streetAndHomeNumber())).toList();
+                a.homepage(), a.email(), a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city())).toList();
     }
 
     public String getNextPageUrl(ApiResponse apiResponse) {

@@ -34,63 +34,55 @@ class OrganizationServiceTest {
 
 
     @Test
-    void getAllOrganizations_returnsEmptyList_whenRepositoryAndApiHaveNoOrganizations() {
+    void getAllOrganizations_returnsEmptyList_whenRepositoryHasNoOrganizations() {
         List<Organization> expected = List.of();
         when(mockedOrganisationRepo.findAll()).thenReturn((List.of()));
-        when(mockedApiService.loadAllOrganizations()).thenReturn((List.of()));
+
         List<Organization> actual = organizationService.getAllOrganizations();
         verify(mockedOrganisationRepo).findAll();
-        verify(mockedApiService).loadAllOrganizations();
+
         assertEquals(expected, actual);
     }
 
     @Test
-    void getAllOrganizations_ShouldReturnAllOrganizationsFromApiAndRepository_ifApiOrganizationsNotExistInRepo() {
-
-        Organization apiOrganization = new Organization("2", "testname2", "testhomepage2", "testemail2",
+    void getAllOrganizations_ShouldReturnAllOrganizations() {
+        Organization testOrganization2 = new Organization("2", "testname2", "testhomepage2", "testemail2",
                 "testaddress2");
-        List<Organization> repoOrganizations = new ArrayList<>(List.of(testOrganization));
-        List<Organization> apiOrganizations = new ArrayList<>(List.of(apiOrganization));
-        List<Organization> expected = new ArrayList<>(repoOrganizations);
-        expected.addAll(apiOrganizations);
 
-        when(mockedApiService.loadAllOrganizations()).thenReturn(apiOrganizations);
-        when(mockedOrganisationRepo.findAll()).thenReturn(repoOrganizations);
-
-        doAnswer(invocation -> {
-            repoOrganizations.add(apiOrganization);
-            return null;
-        }).when(mockedOrganisationRepo).save(apiOrganization);
+        List<Organization> expected = List.of(testOrganization, testOrganization2);
+        when(mockedOrganisationRepo.findAll()).thenReturn((List.of(testOrganization, testOrganization2)));
 
         List<Organization> actual = organizationService.getAllOrganizations();
-
-        verify(mockedApiService).loadAllOrganizations();
-        verify(mockedOrganisationRepo).existsByName("testname2");
-        verify(mockedOrganisationRepo).save(apiOrganization);
         verify(mockedOrganisationRepo).findAll();
+
         assertEquals(expected, actual);
     }
 
     @Test
-    void saveApiOrganizations_shouldSaveOrganizationFromApi_ifApiOrganizationNotExistInRepo() {
-        List<Organization> apiOrganizations = new ArrayList<>(List.of(testOrganization));
+    void refreshOrganizationsFromApi_shouldSaveOrganizationFromApi_ifApiOrganizationNotExistInRepo() {
+        List<Organization> expected = new ArrayList<>(List.of(testOrganization));
+        when(mockedApiService.loadAllOrganizations()).thenReturn(expected);
         when(mockedOrganisationRepo.existsByName(testOrganization.name())).thenReturn(false);
         when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
 
-        organizationService.saveApiOrganizations(apiOrganizations);
+        List<Organization> actual = organizationService.refreshOrganizationsFromApi();
 
         verify(mockedOrganisationRepo).save(testOrganization);
         verify(mockedOrganisationRepo).existsByName(testOrganization.name());
+        assertEquals(expected, actual);
     }
 
     @Test
-    void saveApiOrganizations_shouldNotSaveOrganizationFromApi_ifApiOrganizationExistsInRepo() {
-        List<Organization> apiOrganizations = new ArrayList<>(List.of(testOrganization));
+    void saveApiOrganizations_shouldNotSaveOrganizationIfItAlreadyExistsInRepo() {
+        List<Organization> expected = new ArrayList<>(List.of(testOrganization));
+        when(mockedApiService.loadAllOrganizations()).thenReturn(expected);
         when(mockedOrganisationRepo.existsByName(testOrganization.name())).thenReturn(true);
 
-        organizationService.saveApiOrganizations(apiOrganizations);
+        List<Organization> actual = organizationService.refreshOrganizationsFromApi();
 
         verify(mockedOrganisationRepo).existsByName(testOrganization.name());
+        verify(mockedOrganisationRepo, times(0)).save(testOrganization);
+        Assertions.assertTrue(actual.isEmpty());
 
     }
 

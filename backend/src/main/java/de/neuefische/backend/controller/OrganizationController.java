@@ -43,4 +43,9 @@ public class OrganizationController {
     public void deleteOrganization(@PathVariable String id) {
         organizationService.deleteOrganizationById(id);
     }
+
+    @PutMapping("/refresh")
+    public List<Organization> refreshOrganizationsFromApi() {
+        return organizationService.refreshOrganizationsFromApi();
+    }
 }

@@ -7,6 +7,8 @@ import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,19 +21,27 @@ public class OrganizationService {
     private final OrganizationRepository organizationRepo;
     private final IdService idService;
     private final ArbeitsagenturApiService apiService;
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
 
     public List<Organization> getAllOrganizations() {
-        List<Organization> apiOrganizations = apiService.loadAllOrganizations();
-        saveApiOrganizations(apiOrganizations);
         return new ArrayList<>(organizationRepo.findAll());
     }
 
-    public void saveApiOrganizations(List<Organization> apiOrganizations) {
+    public List<Organization> refreshOrganizationsFromApi() {
+        List<Organization> apiOrganizations = apiService.loadAllOrganizations();
+        List<Organization> savedApiOrganizations = new ArrayList<>();
         for (Organization apiOrganization : apiOrganizations) {
             if (!organizationRepo.existsByName(apiOrganization.name())) {
                 organizationRepo.save(apiOrganization);
+                savedApiOrganizations.add(apiOrganization);
             }
         }
+        if (savedApiOrganizations.isEmpty()) {
+            logger.info("No new organizations found in the API to save.");
+        } else {
+            logger.info("{} new organizations saved from API.", savedApiOrganizations.size());
+        }
+        return savedApiOrganizations;
     }
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {

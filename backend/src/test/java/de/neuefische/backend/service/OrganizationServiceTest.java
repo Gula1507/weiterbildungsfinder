@@ -45,22 +45,53 @@ class OrganizationServiceTest {
     }
 
     @Test
-    void getAllOrganizations_shouldReturnAllOrganizationsFromApiAndRepository() {
-        Organization testOrganization2 = new Organization("2", "testname2", "testhomepage2", "testemail2",
+    void getAllOrganizations_ShouldReturnAllOrganizationsFromApiAndRepository_ifApiOrganizationsNotExistInRepo() {
+
+        Organization apiOrganization = new Organization("2", "testname2", "testhomepage2", "testemail2",
                 "testaddress2");
         List<Organization> repoOrganizations = new ArrayList<>(List.of(testOrganization));
-        List<Organization> apiOrganizations = new ArrayList<>(List.of(testOrganization2));
-        List<Organization> expected = new ArrayList<>();
-        expected.addAll(repoOrganizations);
+        List<Organization> apiOrganizations = new ArrayList<>(List.of(apiOrganization));
+        List<Organization> expected = new ArrayList<>(repoOrganizations);
         expected.addAll(apiOrganizations);
 
-        when(mockedOrganisationRepo.findAll()).thenReturn(repoOrganizations);
         when(mockedApiService.loadAllOrganizations()).thenReturn(apiOrganizations);
+        when(mockedOrganisationRepo.findAll()).thenReturn(repoOrganizations);
+
+        doAnswer(invocation -> {
+            repoOrganizations.add(apiOrganization);
+            return null;
+        }).when(mockedOrganisationRepo).save(apiOrganization);
 
         List<Organization> actual = organizationService.getAllOrganizations();
-        verify(mockedOrganisationRepo).findAll();
+
         verify(mockedApiService).loadAllOrganizations();
+        verify(mockedOrganisationRepo).existsByName("testname2");
+        verify(mockedOrganisationRepo).save(apiOrganization);
+        verify(mockedOrganisationRepo).findAll();
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void saveApiOrganizations_shouldSaveOrganizationFromApi_ifApiOrganizationNotExistInRepo() {
+        List<Organization> apiOrganizations = new ArrayList<>(List.of(testOrganization));
+        when(mockedOrganisationRepo.existsByName(testOrganization.name())).thenReturn(false);
+        when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
+
+        organizationService.saveApiOrganizations(apiOrganizations);
+
+        verify(mockedOrganisationRepo).save(testOrganization);
+        verify(mockedOrganisationRepo).existsByName(testOrganization.name());
+    }
+
+    @Test
+    void saveApiOrganizations_shouldNotSaveOrganizationFromApi_ifApiOrganizationExistsInRepo() {
+        List<Organization> apiOrganizations = new ArrayList<>(List.of(testOrganization));
+        when(mockedOrganisationRepo.existsByName(testOrganization.name())).thenReturn(true);
+
+        organizationService.saveApiOrganizations(apiOrganizations);
+
+        verify(mockedOrganisationRepo).existsByName(testOrganization.name());
+
     }
 
     @Test
@@ -68,6 +99,7 @@ class OrganizationServiceTest {
         OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage", "testemail", "testaddress");
         when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
         when(mockedIdService.generateRandomId()).thenReturn("1");
+        when(mockedOrganisationRepo.existsByName("testname2")).thenReturn(false);
 
         Organization organizationActual = organizationService.saveOrganizationFromDTO(organizationDTO);
         verify(mockedOrganisationRepo).save(testOrganization);
@@ -101,7 +133,8 @@ class OrganizationServiceTest {
         OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name", "Updated Homepage", "updated@email.com"
                 , "Updated Address");
         String id = "1";
-        Organization expectedOrganization = new Organization(id, "Updated Name", "Updated Homepage", "updated@email" + ".com", "Updated" + " Address");
+        Organization expectedOrganization = new Organization(id, "Updated Name", "Updated Homepage",
+                "updated@email" + ".com", "Updated" + " Address");
         when(mockedOrganisationRepo.existsById(id)).thenReturn(true);
         when(mockedOrganisationRepo.save(any(Organization.class))).thenReturn(expectedOrganization);
 

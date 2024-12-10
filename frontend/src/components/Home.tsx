@@ -39,8 +39,8 @@ function Home(props: HomeProps) {
             <div className="slogan-container">
                 <img
                     className="small-image"
-                    src="/images/pictures.png"
-                    alt="Suchender Geschäftsmann auf dem Schiff"
+                    src="/images/home-icons.png"
+                    alt="Icons representing home features such as house, magnifying glass, thumbs up"
                 />
                 <div className="slogan">
                     <h2>Entdecke KURSDA</h2>

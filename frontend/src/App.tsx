@@ -16,7 +16,7 @@ function App() {
 
     const loadOrganizations = (page: number, size: number) => {
         setLoading(true);
-        axios.get(`/api/organizations?page=${page}&size=${size}`).then((response) => {
+        axios.get(`/api/organizations?page=${page}&size=${size}&sort=name,asc`).then((response) => {
             setOrganizations(response.data.content);
             setTotalPages(response.data.totalPages);
             setLoading(false);

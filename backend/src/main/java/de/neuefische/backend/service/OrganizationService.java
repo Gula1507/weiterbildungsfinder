@@ -11,6 +11,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Collation;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class OrganizationService {
-
+    private final MongoTemplate mongoTemplate;
     private final OrganizationRepository organizationRepo;
     private final IdService idService;
     private final ArbeitsagenturApiService apiService;
@@ -27,7 +33,13 @@ public class OrganizationService {
 
 
     public Page<Organization> getAllOrganizations(int page, int size) {
-        return organizationRepo.findAll(PageRequest.of(page, size));
+        Pageable pageable;
+        pageable = PageRequest.of(page, size);
+        Query query = new Query().with(Sort.by(new Sort.Order(Sort.Direction.ASC, "name"))).with(pageable);
+        query.collation(Collation.of("en").strength(Collation.ComparisonLevel.secondary()));
+        List<Organization> sortedOrganizations = mongoTemplate.find(query, Organization.class);
+
+        return PageableExecutionUtils.getPage(sortedOrganizations, pageable, organizationRepo::count);
     }
 
     public List<Organization> refreshOrganizationsFromApi() {

@@ -76,10 +76,14 @@ function Home(props: HomeProps) {
                 )}
 
                 <div className="pagination">
+                    <button onClick={() => handlePageChange(0)} disabled={page <= 0}>⏮️</button>
                     <button onClick={() => handlePageChange(page - 1)} disabled={page <= 0}>🢦</button>
                     <span>Seite {page + 1} von {props.totalPages}</span>
                     <button onClick={() => handlePageChange(page + 1)} disabled={page >= props.totalPages - 1}>
                         🢧
+                    </button>
+                    <button onClick={() => handlePageChange(props.totalPages - 1)}
+                            disabled={page >= props.totalPages - 1}>⏭️
                     </button>
                 </div>
             </div>

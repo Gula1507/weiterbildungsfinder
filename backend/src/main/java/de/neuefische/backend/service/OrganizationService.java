@@ -7,6 +7,8 @@ import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,36 +21,49 @@ public class OrganizationService {
     private final OrganizationRepository organizationRepo;
     private final IdService idService;
     private final ArbeitsagenturApiService apiService;
+    private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
 
     public List<Organization> getAllOrganizations() {
-        List<Organization> allOrganizations = new ArrayList<>();
-        allOrganizations.addAll(organizationRepo.findAll());
-        allOrganizations.addAll(apiService.loadAllOrganizations());
-        return allOrganizations;
+        return new ArrayList<>(organizationRepo.findAll());
+    }
+
+    public List<Organization> refreshOrganizationsFromApi() {
+        List<Organization> apiOrganizations = apiService.loadAllOrganizations();
+        List<Organization> savedApiOrganizations = new ArrayList<>();
+        for (Organization apiOrganization : apiOrganizations) {
+            if (!organizationRepo.existsByName(apiOrganization.name())) {
+                organizationRepo.save(apiOrganization);
+                savedApiOrganizations.add(apiOrganization);
+            }
+        }
+        if (savedApiOrganizations.isEmpty()) {
+            logger.info("No new organizations found in the API to save.");
+        } else {
+            logger.info("{} new organizations saved from API.", savedApiOrganizations.size());
+        }
+        return savedApiOrganizations;
     }
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {
-        Organization organization = new Organization(
-                idService.generateRandomId(),
-                organizationDTO.name(), organizationDTO.homepage(),
-                organizationDTO.email(), organizationDTO.address());
+        Organization organization = new Organization(idService.generateRandomId(), organizationDTO.name(),
+                organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address());
         return organizationRepo.save(organization);
     }
 
     public OrganizationDTO getOrganizationDTObyId(String id) {
-        Organization organization = organizationRepo.findById(id)
-                .orElseThrow(() -> new OrganizationNotFoundException(id));
+        Organization organization =
+                organizationRepo.findById(id).orElseThrow(() -> new OrganizationNotFoundException(id));
         return new OrganizationDTO(organization.name(), organization.homepage(), organization.email(),
                 organization.address());
     }
 
     public Organization updateOrganizationFromDTO(String id, @Valid OrganizationDTO organizationDTO) {
         if (organizationRepo.existsById(id)) {
-            Organization updatedOrganization = new Organization(id, organizationDTO.name(), organizationDTO.homepage(),
-                    organizationDTO.email(),
-                    organizationDTO.address());
+            Organization updatedOrganization = new Organization(id, organizationDTO.name(),
+                    organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address());
             return organizationRepo.save(updatedOrganization);
-        } else throw new OrganizationNotFoundException(id);
+        } else
+            throw new OrganizationNotFoundException(id);
     }
 
     public void deleteOrganizationById(String id) {

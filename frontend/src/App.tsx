@@ -12,11 +12,13 @@ import Header from "./components/Header.tsx";
 function App() {
     const [organizations, setOrganizations] = useState<Organization[]>([])
     const [loading, setLoading] = useState<boolean>(true);
+    const [totalPages, setTotalPages] = useState<number>(0);
 
-    const loadOrganizations = () => {
+    const loadOrganizations = (page: number, size: number) => {
         setLoading(true);
-        axios.get("/api/organizations").then((response) => {
-            setOrganizations(response.data);
+        axios.get(`/api/organizations?page=${page}&size=${size}`).then((response) => {
+            setOrganizations(response.data.content);
+            setTotalPages(response.data.totalPages);
             setLoading(false);
             }
         )
@@ -26,7 +28,7 @@ function App() {
             })
     }
     useEffect(() => {
-        loadOrganizations()
+        loadOrganizations(0, 10)
     }, [])
 
     return (
@@ -35,7 +37,8 @@ function App() {
             <Routes>
                 <Route
                     path="/"
-                    element={<Home organizations={organizations} loading={loading}/>}
+                    element={<Home organizations={organizations} loading={loading} loadOrganizations={loadOrganizations}
+                                   totalPages={totalPages}/>}
 
                 />
                 <Route path="/add-organization" element={<OrganizationForm/>}/>

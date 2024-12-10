@@ -8,6 +8,10 @@ import de.neuefische.backend.repository.OrganizationRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +39,12 @@ class OrganizationServiceTest {
 
     @Test
     void getAllOrganizations_returnsEmptyList_whenRepositoryHasNoOrganizations() {
-        List<Organization> expected = List.of();
-        when(mockedOrganisationRepo.findAll()).thenReturn((List.of()));
+        Page<Organization> expected = Page.empty();
+        Pageable pageable = PageRequest.of(0, 10);
+        when(mockedOrganisationRepo.findAll(pageable)).thenReturn(expected);
 
-        List<Organization> actual = organizationService.getAllOrganizations();
-        verify(mockedOrganisationRepo).findAll();
+        Page<Organization> actual = organizationService.getAllOrganizations(0, 10);
+        verify(mockedOrganisationRepo).findAll(pageable);
 
         assertEquals(expected, actual);
     }
@@ -48,12 +53,13 @@ class OrganizationServiceTest {
     void getAllOrganizations_ShouldReturnAllOrganizations() {
         Organization testOrganization2 = new Organization("2", "testname2", "testhomepage2", "testemail2",
                 "testaddress2");
+        Page<Organization> expected = new PageImpl<>(List.of(testOrganization, testOrganization2));
 
-        List<Organization> expected = List.of(testOrganization, testOrganization2);
-        when(mockedOrganisationRepo.findAll()).thenReturn((List.of(testOrganization, testOrganization2)));
+        Pageable pageable = PageRequest.of(0, 10);
+        when(mockedOrganisationRepo.findAll(pageable)).thenReturn(expected);
 
-        List<Organization> actual = organizationService.getAllOrganizations();
-        verify(mockedOrganisationRepo).findAll();
+        Page<Organization> actual = organizationService.getAllOrganizations(0, 10);
+        verify(mockedOrganisationRepo).findAll(pageable);
 
         assertEquals(expected, actual);
     }

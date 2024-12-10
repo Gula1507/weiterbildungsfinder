@@ -43,10 +43,11 @@ class OrganizationControllerIntegrationTest {
     }
 
     @Test
-    void getAllOrganizations_shouldReturnListOfOrganizations() throws Exception {
+    void getAllOrganizations_shouldReturnPagedListOfOrganizationsByDefault() throws Exception {
         organizationRepository.save(testOrganization);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations")).andExpect(status().isOk()).andExpect(content().json("""
+                   { "content":
                     [
                         {
                             "id": "1",
@@ -55,7 +56,33 @@ class OrganizationControllerIntegrationTest {
                             "email": "testemail",
                             "address": "testaddress"
                         }
-                    ]
+                    ],
+                     "pageable": {
+                        "sort": {
+                            "sorted": false,
+                            "unsorted": true,
+                            "empty": true
+                        },
+                        "pageNumber": 0,
+                        "pageSize": 10,
+                        "offset": 0,
+                        "unpaged": false,
+                        "paged": true
+                     },
+                     "totalPages": 1,
+                     "totalElements": 1,
+                     "last": true,
+                     "size": 10,
+                     "number": 0,
+                     "sort": {
+                        "sorted": false,
+                        "unsorted": true,
+                        "empty": true
+                     },
+                     "first": true,
+                     "numberOfElements": 1,
+                     "empty": false
+                   }
                 """));
 
     }
@@ -64,7 +91,35 @@ class OrganizationControllerIntegrationTest {
     @Test
     void getAllOrganizations_shouldReturnEmptyListWhenNoOrganisationsInRepo() throws Exception {
         organizationRepository.deleteAll();
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations")).andExpect(status().isOk()).andExpect(content().json("[]"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/organizations")).andExpect(status().isOk()).andExpect(content().json("""
+                 { "content":[],
+                  "pageable": {
+                                                           "pageNumber": 0,
+                                                           "pageSize": 10,
+                                                           "sort": {
+                                                               "empty": true,
+                                                               "sorted": false,
+                                                               "unsorted": true
+                                                           },
+                                                           "offset": 0,
+                                                           "paged": true,
+                                                           "unpaged": false
+                                                       },
+                                                       "last": true,
+                                                       "totalPages": 0,
+                                                       "totalElements": 0,
+                                                       "first": true,
+                                                       "size": 10,
+                                                       "number": 0,
+                                                       "sort": {
+                                                           "empty": true,
+                                                           "sorted": false,
+                                                           "unsorted": true
+                                                       },
+                                                       "numberOfElements": 0,
+                                                       "empty": true
+                                   }
+                """));
     }
 
 

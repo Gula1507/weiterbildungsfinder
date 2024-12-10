@@ -5,6 +5,7 @@ import de.neuefische.backend.model.OrganizationDTO;
 import de.neuefische.backend.service.OrganizationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +19,9 @@ public class OrganizationController {
     private final OrganizationService organizationService;
 
     @GetMapping
-    public List<Organization> getAllOrganizations() {
-        return organizationService.getAllOrganizations();
+    public Page<Organization> getAllOrganizations(@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
+        return organizationService.getAllOrganizations(page, size);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

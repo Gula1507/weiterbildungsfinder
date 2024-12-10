@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,8 +25,9 @@ public class OrganizationService {
     private final ArbeitsagenturApiService apiService;
     private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
 
-    public List<Organization> getAllOrganizations() {
-        return new ArrayList<>(organizationRepo.findAll());
+
+    public Page<Organization> getAllOrganizations(int page, int size) {
+        return organizationRepo.findAll(PageRequest.of(page, size));
     }
 
     public List<Organization> refreshOrganizationsFromApi() {

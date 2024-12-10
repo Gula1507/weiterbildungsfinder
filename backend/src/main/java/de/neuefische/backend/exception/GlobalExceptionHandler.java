@@ -15,13 +15,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage handleException(Exception exception) {
+        exception.printStackTrace();
         return new ErrorMessage("An unexpected error occurred: " + exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage handleValidationExceptions(MethodArgumentNotValidException exception) {
-
+        exception.printStackTrace();
         List<String> errorMessages = exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -36,6 +37,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OrganizationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleOrganizationNotFoundException(OrganizationNotFoundException exception) {
+        exception.printStackTrace();
         return new ErrorMessage(exception.getMessage());
     }
 

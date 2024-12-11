@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,40 +28,48 @@ class OrganizationServiceTest {
     OrganizationRepository mockedOrganisationRepo = mock(OrganizationRepository.class);
     IdService mockedIdService = mock(IdService.class);
     ArbeitsagenturApiService mockedApiService = mock(ArbeitsagenturApiService.class);
-    OrganizationService organizationService = new OrganizationService(mockedOrganisationRepo, mockedIdService,
-            mockedApiService);
+    MongoTemplate mockedMongoTemplate = mock(MongoTemplate.class);
+
+    OrganizationService organizationService = new OrganizationService(mockedMongoTemplate, mockedOrganisationRepo,
+            mockedIdService, mockedApiService);
     private Organization testOrganization;
 
     @BeforeEach
     void setUp() {
-
         testOrganization = new Organization("1", "testname", "testhomepage", "testemail", "testaddress");
     }
 
 
     @Test
-    void getAllOrganizations_returnsEmptyList_whenRepositoryHasNoOrganizations() {
-        Page<Organization> expected = Page.empty();
+    void getAllOrganizations_returnsEmptyPage_whenRepositoryHasNoOrganizations() {
         Pageable pageable = PageRequest.of(0, 10);
-        when(mockedOrganisationRepo.findAll(pageable)).thenReturn(expected);
+        Page<Organization> expected = new PageImpl<>(List.of(), pageable, 0);
 
+        when(mockedMongoTemplate.find(any(Query.class), eq(Organization.class))).thenReturn(List.of());
+        when(mockedOrganisationRepo.count()).thenReturn(0L);
         Page<Organization> actual = organizationService.getAllOrganizations(0, 10);
-        verify(mockedOrganisationRepo).findAll(pageable);
 
+        verify(mockedMongoTemplate).find(any(Query.class), eq(Organization.class));
         assertEquals(expected, actual);
     }
 
     @Test
     void getAllOrganizations_ShouldReturnAllOrganizations() {
-        Organization testOrganization2 = new Organization("2", "testname2", "testhomepage2", "testemail2",
-                "testaddress2");
-        Page<Organization> expected = new PageImpl<>(List.of(testOrganization, testOrganization2));
+        Organization testOrganizationA = new Organization("1", "A-name", "testhomepage", "testemail", "testaddress");
+        Organization testOrganizationSmallA = new Organization("1", "a-name", "testhomepage", "testemail",
+                "testaddress");
+        Organization testOrganizationB = new Organization("1", "B-name", "testhomepage", "testemail", "testaddress");
+
+        List<Organization> sortedOrganizations = List.of(testOrganizationA, testOrganizationSmallA, testOrganizationB);
 
         Pageable pageable = PageRequest.of(0, 10);
-        when(mockedOrganisationRepo.findAll(pageable)).thenReturn(expected);
+        Page<Organization> expected = new PageImpl<>(sortedOrganizations, pageable, sortedOrganizations.size());
+
+        when(mockedMongoTemplate.find(any(Query.class), eq(Organization.class))).thenReturn(sortedOrganizations);
 
         Page<Organization> actual = organizationService.getAllOrganizations(0, 10);
-        verify(mockedOrganisationRepo).findAll(pageable);
+
+        verify(mockedMongoTemplate).find(any(Query.class), eq(Organization.class));
 
         assertEquals(expected, actual);
     }

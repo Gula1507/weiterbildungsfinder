@@ -43,7 +43,7 @@ class ArbeitsagenturApiServiceTest {
         assertNotNull(organizations);
         assertEquals(1, organizations.size());
         assertEquals("Test Organization", organizations.getFirst().name());
-        assertEquals("99084 Erfurt, Juri-Gagarin-Ring 152", organizations.getFirst().address());
+        assertEquals("Juri-Gagarin-Ring 152, 99084 Erfurt", organizations.getFirst().address());
 
     }
 

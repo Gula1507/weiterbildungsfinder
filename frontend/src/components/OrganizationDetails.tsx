@@ -67,6 +67,12 @@ function OrganizationDetails() {
             </p>
             <p>Email: {organization?.email}</p>
             <p>Adresse: {organization?.address}</p>
+            <p> Rezensionen: {organization?.reviews && organization.reviews.length > 0
+                ? organization?.reviews.map(r => r.comment).join(", ")
+                : "noch keine Rezensionen vorhanden"}</p>
+            <p>Durchschnitsnote: {(organization?.averageRating === null || organization?.averageRating === 0.0)
+                ? "noch keine Bewertung"
+                : organization?.averageRating.toFixed(1)}</p>
             <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
                 Bearbeiten
             </button>

@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -39,7 +40,8 @@ class OrganizationControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         organizationRepository.deleteAll();
-        testOrganization = new Organization("1", "testname", "testhomepage", "testemail", "testaddress");
+        testOrganization = new Organization("1", "testname", "testhomepage", "testemail", "testaddress",
+                new ArrayList<>(), 0.0);
     }
 
     @Test
@@ -54,7 +56,9 @@ class OrganizationControllerIntegrationTest {
                             "name": "testname",
                             "homepage": "testhomepage",
                             "email": "testemail",
-                            "address": "testaddress"
+                            "address": "testaddress",
+                            "reviews": [],
+                            "averageRating": 0.0
                         }
                     ],
                      "pageable": {
@@ -169,7 +173,9 @@ class OrganizationControllerIntegrationTest {
                   "name": "testname",
                   "homepage": "newhomepage",
                   "email": "testemail",
-                  "address": "testaddress"
+                  "address": "testaddress",
+                  "reviews": [],
+                  "averageRating": 0.0
                 }
                 """;
         String expectedResponseBody = """
@@ -177,7 +183,9 @@ class OrganizationControllerIntegrationTest {
                   "name": "testname",
                   "homepage": "newhomepage",
                   "email": "testemail",
-                  "address": "testaddress"
+                  "address": "testaddress",
+                  "reviews": [],
+                  "averageRating": 0.0
                 }
                 """;
 
@@ -193,7 +201,9 @@ class OrganizationControllerIntegrationTest {
                   "name": "testname",
                   "homepage": "newhomepage",
                   "email": "testemail",
-                  "address": "testaddress"
+                  "address": "testaddress",
+                  "reviews": [],
+                  "averageRating": 0.0
                 }
                 """;
 
@@ -223,7 +233,9 @@ class OrganizationControllerIntegrationTest {
                             "name": "testname",
                             "homepage": "testhomepage",
                             "email": "testemail",
-                            "address": "testaddress"
+                            "address": "testaddress",
+                            "reviews": [],
+                            "averageRating": 0.0
                         }
                     ]
                 """));

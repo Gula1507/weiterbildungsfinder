@@ -61,7 +61,9 @@ public class ArbeitsagenturApiService {
     public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
 
         return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.name(),
-                a.homepage(), a.email(), a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city())).toList();
+                a.homepage(), a.email(),
+
+                a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city())).toList();
     }
 
     public String getNextPageUrl(ApiResponse apiResponse) {

@@ -21,6 +21,18 @@ body {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+.review-button {
+    background-color: cadetblue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
 button {
     background-color: #d3d1d1;
     color: black;

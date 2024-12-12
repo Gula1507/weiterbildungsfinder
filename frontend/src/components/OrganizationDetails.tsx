@@ -5,6 +5,7 @@ import {Organization} from "../types/Organization.ts";
 
 function OrganizationDetails() {
     const {id} = useParams();
+    console.log('organizationId from URL:', id);
     const navigate = useNavigate();
     const [organization, setOrganization] = useState<Organization | null>(null);
     const [loading, setLoading] = useState(true);
@@ -73,6 +74,10 @@ function OrganizationDetails() {
             <p>Durchschnitsnote: {(organization?.averageRating === null || organization?.averageRating === 0.0)
                 ? "noch keine Bewertung"
                 : organization?.averageRating.toFixed(1)}</p>
+            <button className="review-button" onClick={() => navigate(`/add-review/${id}`,
+                {state: {organization}})}>
+                Bewerten
+            </button>
             <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
                 Bearbeiten
             </button>

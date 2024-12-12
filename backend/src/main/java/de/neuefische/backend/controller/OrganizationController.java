@@ -2,6 +2,7 @@ package de.neuefische.backend.controller;
 
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
+import de.neuefische.backend.model.ReviewDTO;
 import de.neuefische.backend.service.OrganizationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,8 @@ public class OrganizationController {
     }
 
     @PutMapping("/{id}")
-    public Organization updateOrganization(@PathVariable String id, @Valid @RequestBody OrganizationDTO organizationDTO) {
+    public Organization updateOrganization(@PathVariable String id,
+                                           @Valid @RequestBody OrganizationDTO organizationDTO) {
         return organizationService.updateOrganizationFromDTO(id, organizationDTO);
     }
 
@@ -49,5 +51,11 @@ public class OrganizationController {
     @PutMapping("/refresh")
     public List<Organization> refreshOrganizationsFromApi() {
         return organizationService.refreshOrganizationsFromApi();
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/{id}/reviews")
+    public Organization addReview(@PathVariable String id, @RequestBody @Valid ReviewDTO reviewDTO) {
+        return organizationService.addReviewToOrganization(id, reviewDTO);
     }
 }

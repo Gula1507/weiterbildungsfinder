@@ -4,6 +4,8 @@ import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.exception.OrganizationNotFoundException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
+import de.neuefische.backend.model.Review;
+import de.neuefische.backend.model.ReviewDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -186,4 +188,35 @@ class OrganizationServiceTest {
 
     }
 
+    @Test
+    void addReviewToOrganization_shouldNotAddReview_whenReviewStarNumber6() {
+        ReviewDTO reviewDTO = new ReviewDTO("testauthor", "testcomment", 6);
+
+        when(mockedIdService.generateRandomId()).thenReturn("123");
+        when(mockedOrganisationRepo.findById(testOrganization.id())).thenReturn(Optional.ofNullable(testOrganization));
+
+        Organization actual = organizationService.addReviewToOrganization(testOrganization.id(), reviewDTO);
+        Organization expected = testOrganization;
+
+        verify(mockedOrganisationRepo).findById(testOrganization.id());
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
+    void addReviewToOrganization_shouldThrowException_whenOrganizationNotFound() {
+        ReviewDTO reviewDTO = new ReviewDTO("testauthor", "testcomment", 3);
+        List<Review> reviews = new ArrayList<>(List.of(new Review("123", "testauthor", "testcomment", 3)));
+        when(mockedIdService.generateRandomId()).thenReturn("123");
+        when(mockedOrganisationRepo.findById(testOrganization.id())).thenReturn(Optional.ofNullable(testOrganization));
+
+        Organization actual = organizationService.addReviewToOrganization(testOrganization.id(), reviewDTO);
+        Organization expected = testOrganization.withReviews(reviews);
+
+        verify(mockedIdService).generateRandomId();
+        verify(mockedOrganisationRepo).save(actual);
+        verify(mockedOrganisationRepo).findById(testOrganization.id());
+        assertEquals(expected, actual);
+
+    }
 }

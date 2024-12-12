@@ -4,6 +4,8 @@ import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.exception.OrganizationNotFoundException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
+import de.neuefische.backend.model.Review;
+import de.neuefische.backend.model.ReviewDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -87,6 +89,19 @@ public class OrganizationService {
         } else {
             organizationRepo.deleteById(id);
         }
+    }
+
+    public Organization addReviewToOrganization(String organizationId, ReviewDTO reviewDTO) {
+        Review review = new Review(idService.generateRandomId(), reviewDTO.author(), reviewDTO.comment(),
+                reviewDTO.starNumber());
+        Organization organization =
+                organizationRepo.findById(organizationId).orElseThrow(() -> new OrganizationNotFoundException(organizationId));
+        List<Review> reviews = new ArrayList<>(organization.reviews());
+        reviews.add(review);
+
+        Organization actualisedOrganization = organization.withReviews(reviews);
+        organizationRepo.save(actualisedOrganization);
+        return actualisedOrganization;
     }
 }
 

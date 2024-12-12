@@ -2,11 +2,12 @@ package de.neuefische.backend.model;
 
 
 import jakarta.validation.Valid;
+import lombok.With;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@With
 public record Organization(String id, String name, String homepage, String email, String address,
                            List<@Valid Review> reviews, double averageRating) {
     @Override

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -247,5 +248,53 @@ class OrganizationControllerIntegrationTest {
         organizationRepository.save(testOrganization);
         when(mockedApiService.loadAllOrganizations()).thenReturn(List.of(testOrganization));
         mockMvc.perform(put("/api/organizations/refresh")).andExpect(status().isOk()).andExpect(content().json("[]"));
+    }
+
+    @Test
+    void addReview_shouldReturnOrganizationWithReview_whenDTOReviewValid() throws Exception {
+        organizationRepository.save(testOrganization);
+
+        mockMvc.perform(post("/api/organizations/1/reviews").contentType(MediaType.APPLICATION_JSON).content("""
+                {
+                "author": "John",
+                "comment": "Not good",
+                "starNumber": 2
+                }
+                """)).andExpect(status().isCreated()).andExpect(content().json("""
+                
+                {
+                   "id": "1",
+                   "name": "testname",
+                   "homepage": "testhomepage",
+                   "email": "testemail",
+                  "address": "testaddress",
+                  "reviews": [
+                      {
+                          "author": "John",
+                          "comment": "Not good",
+                          "starNumber": 2
+                      }
+                  ],
+                  "averageRating": 0.0
+                }
+                """)).andExpect(jsonPath("$.id").isNotEmpty());
+
+    }
+
+    @Test
+    void addReview_shouldReturnWarnMessage_whenDTOReviewNotValid() throws Exception {
+        organizationRepository.save(testOrganization);
+
+        mockMvc.perform(post("/api/organizations/1/reviews").contentType(MediaType.APPLICATION_JSON).content("""
+                {
+                "author": "John",
+                "comment": "Not good",
+                "starNumber": 0
+                }
+                """)).andExpect(status().isBadRequest()).andExpect(content().json("""
+                {
+                 "message": "Validation failed: starNumber: must be greater than or equal to 1"
+                }
+                """));
     }
 }

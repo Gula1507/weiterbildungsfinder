@@ -189,22 +189,19 @@ class OrganizationServiceTest {
     }
 
     @Test
-    void addReviewToOrganization_shouldNotAddReview_whenReviewStarNumber6() {
-        ReviewDTO reviewDTO = new ReviewDTO("testauthor", "testcomment", 6);
-
+    void addReviewToOrganization_shouldThrowException_whenOrganizationNotFound() {
+        ReviewDTO reviewDTO = new ReviewDTO("testauthor", "testcomment", 5);
+        String id = "123";
         when(mockedIdService.generateRandomId()).thenReturn("123");
-        when(mockedOrganisationRepo.findById(testOrganization.id())).thenReturn(Optional.ofNullable(testOrganization));
+        when(mockedOrganisationRepo.findById(id)).thenReturn(Optional.empty());
 
-        Organization actual = organizationService.addReviewToOrganization(testOrganization.id(), reviewDTO);
-        Organization expected = testOrganization;
-
-        verify(mockedOrganisationRepo).findById(testOrganization.id());
-        assertEquals(expected, actual);
+        assertThrows(OrganizationNotFoundException.class, () -> organizationService.addReviewToOrganization(id,
+                reviewDTO));
 
     }
 
     @Test
-    void addReviewToOrganization_shouldThrowException_whenOrganizationNotFound() {
+    void addReviewToOrganization_shouldReturnOrganizationWithActualizedReviews_whenOrganizationExist() {
         ReviewDTO reviewDTO = new ReviewDTO("testauthor", "testcomment", 3);
         List<Review> reviews = new ArrayList<>(List.of(new Review("123", "testauthor", "testcomment", 3)));
         when(mockedIdService.generateRandomId()).thenReturn("123");

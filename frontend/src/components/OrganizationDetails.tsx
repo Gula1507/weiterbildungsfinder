@@ -2,6 +2,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Organization} from "../types/Organization.ts";
+import "../styles/OrganizationDetails.css"
+import StarsRating from "./StarsRating.tsx";
 
 function OrganizationDetails() {
     const {id} = useParams();
@@ -54,9 +56,22 @@ function OrganizationDetails() {
 
     return (
         <div>
-            <h1>{organization?.name}</h1>
+            <button className="review-button" onClick={() => navigate(`/add-review/${id}`,
+                {state: {organization}})}>
+                Bewerten
+            </button>
+            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
+                Bearbeiten
+            </button>
+            <button onClick={deleteOrganization} className="delete-button">Löschen</button>
+            {deleteSuccess && (
+                <p className="success-message">Der Anbieter wurde gelöscht! Weiterleitung auf die Startseite...</p>
+            )}
+            <h2>{organization?.name}</h2>
+
             <p>
-                Webseite: <a
+                <br/>
+                <strong>Webseite:</strong> <a
                 href={organization?.homepage?.startsWith('http') ? organization?.homepage
                     : `http://${organization?.homepage}`}
                 target="_blank"
@@ -65,15 +80,27 @@ function OrganizationDetails() {
                 {organization?.homepage}
             </a>
             </p>
-            <p>Email: {organization?.email}</p>
-            <p>Adresse: {organization?.address}</p>
-            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
-                Bearbeiten
-            </button>
-            <button onClick={deleteOrganization} className="delete-button">Löschen</button>
-            {deleteSuccess && (
-                <p className="success-message">Der Anbieter wurde gelöscht! Weiterleitung auf die Startseite...</p>
-            )}
+
+            <p><strong>Email:</strong> {organization?.email}</p>
+            <p><strong>Adresse:</strong> {organization?.address}</p>
+
+
+            <p>
+                <strong>Durchschnitsnote</strong>: {(organization?.averageRating === null || organization?.averageRating === 0.0)
+                ? "noch keine Bewertung"
+
+                : (<StarsRating rating={parseFloat(organization?.averageRating.toFixed(1) as string)}/>)}
+            </p>
+
+            <p><strong>Rezensionen</strong> {organization?.reviews && organization.reviews.length > 0
+                ?
+                (<ul className="review-list">
+                    {organization?.reviews.map((r, index) => (
+                        <li key={index} className="review-item">{r.author}: {r.comment} <br/>
+                            <StarsRating rating={r.starNumber}/>
+                        </li>))}
+                </ul>)
+                : "noch keine Rezensionen vorhanden"}</p>
         </div>
     );
 }

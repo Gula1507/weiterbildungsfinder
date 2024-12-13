@@ -7,6 +7,7 @@ import Home from "./components/Home.tsx";
 import OrganizationForm from "./components/OrganizationForm.tsx";
 import OrganizationDetails from "./components/OrganizationDetails.tsx";
 import Header from "./components/Header.tsx";
+import ReviewForm from "./components/ReviewForm.tsx";
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/add-organization" element={<OrganizationForm/>}/>
                 <Route path="/edit-organization/:id" element={<OrganizationForm/>}/>
                 <Route path="/organizations/:id" element={<OrganizationDetails/>}/>
+                <Route path="/add-review/:id" element={<ReviewForm/>}/>
             </Routes>
         </div>
     )

@@ -4,8 +4,9 @@ import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.exception.OrganizationNotFoundException;
 import de.neuefische.backend.model.Organization;
 import de.neuefische.backend.model.OrganizationDTO;
+import de.neuefische.backend.model.Review;
+import de.neuefische.backend.model.ReviewDTO;
 import de.neuefische.backend.repository.OrganizationRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,7 @@ public class OrganizationService {
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {
         Organization organization = new Organization(idService.generateRandomId(), organizationDTO.name(),
-                organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address());
+                organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(), new ArrayList<>(), 0.0);
         return organizationRepo.save(organization);
     }
 
@@ -69,13 +70,14 @@ public class OrganizationService {
         Organization organization =
                 organizationRepo.findById(id).orElseThrow(() -> new OrganizationNotFoundException(id));
         return new OrganizationDTO(organization.name(), organization.homepage(), organization.email(),
-                organization.address());
+                organization.address(), organization.reviews(), organization.averageRating());
     }
 
-    public Organization updateOrganizationFromDTO(String id, @Valid OrganizationDTO organizationDTO) {
+    public Organization updateOrganizationFromDTO(String id, OrganizationDTO organizationDTO) {
         if (organizationRepo.existsById(id)) {
             Organization updatedOrganization = new Organization(id, organizationDTO.name(),
-                    organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address());
+                    organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(),
+                    organizationDTO.reviews(), organizationDTO.averageRating());
             return organizationRepo.save(updatedOrganization);
         } else
             throw new OrganizationNotFoundException(id);
@@ -87,6 +89,20 @@ public class OrganizationService {
         } else {
             organizationRepo.deleteById(id);
         }
+    }
+
+    public Organization addReviewToOrganization(String organizationId, ReviewDTO reviewDTO) {
+        Review review = new Review(idService.generateRandomId(), reviewDTO.author(), reviewDTO.comment(),
+                reviewDTO.starNumber());
+        Organization organization =
+                organizationRepo.findById(organizationId).orElseThrow(() -> new OrganizationNotFoundException(organizationId));
+        List<Review> reviews = new ArrayList<>(organization.reviews());
+        reviews.add(review);
+        double averageRating = reviews.stream().mapToInt(Review::starNumber).average().orElse(0.0);
+
+        Organization actualisedOrganization = organization.withReviews(reviews).withAverageRating(averageRating);
+        organizationRepo.save(actualisedOrganization);
+        return actualisedOrganization;
     }
 }
 

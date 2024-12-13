@@ -63,7 +63,7 @@ public class ArbeitsagenturApiService {
         return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.name(),
                 a.homepage(), a.email(),
 
-                a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city())).toList();
+                a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city(), new ArrayList<>(), 0.0)).toList();
     }
 
     public String getNextPageUrl(ApiResponse apiResponse) {

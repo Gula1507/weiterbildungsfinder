@@ -98,8 +98,9 @@ public class OrganizationService {
                 organizationRepo.findById(organizationId).orElseThrow(() -> new OrganizationNotFoundException(organizationId));
         List<Review> reviews = new ArrayList<>(organization.reviews());
         reviews.add(review);
+        double averageRating = reviews.stream().mapToInt(Review::starNumber).average().orElse(0.0);
 
-        Organization actualisedOrganization = organization.withReviews(reviews);
+        Organization actualisedOrganization = organization.withReviews(reviews).withAverageRating(averageRating);
         organizationRepo.save(actualisedOrganization);
         return actualisedOrganization;
     }

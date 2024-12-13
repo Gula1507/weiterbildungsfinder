@@ -275,7 +275,7 @@ class OrganizationControllerIntegrationTest {
                           "starNumber": 2
                       }
                   ],
-                  "averageRating": 0.0
+                  "averageRating": 2
                 }
                 """)).andExpect(jsonPath("$.id").isNotEmpty());
 

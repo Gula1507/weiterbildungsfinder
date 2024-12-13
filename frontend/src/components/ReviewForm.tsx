@@ -2,6 +2,7 @@ import "../styles/ReviewForm.css"
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import {useState} from "react";
+import StarsRating from "./StarsRating.tsx";
 
 function ReviewForm() {
     const {id} = useParams();
@@ -50,15 +51,13 @@ function ReviewForm() {
                             key={value}
                             type="button"
                             onClick={() => handleStarClick(value)}
-                            style={{
-                                backgroundColor: starNumber === value ? "gold" : "lightgray",
-                            }}
+                            className="rating-button"
                         >
-                            {value}
+                            <StarsRating rating={value}/>
                         </button>
                     ))}
                 </div>
-                <p>Gewählte Bewertung: {starNumber || "Keine"}</p>
+                <p>Anzahl Sterne: {starNumber || "noch keine"}</p>
                 <input
                     type="text"
                     value={comment}

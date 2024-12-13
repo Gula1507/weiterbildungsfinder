@@ -5,3 +5,16 @@
     background-color: #f9f9f9;
     border-radius: 8px;
 }
+
+.rating-button {
+    background-color: cadetblue;
+    border: none;
+    cursor: pointer;
+
+}
+
+
+.rating-button:hover {
+    background-color: dimgray;
+}
+

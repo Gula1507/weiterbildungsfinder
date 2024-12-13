@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Service
@@ -38,8 +39,10 @@ public class OrganizationService {
         Pageable pageable;
         pageable = PageRequest.of(page, size);
         Query query = new Query().with(Sort.by(new Sort.Order(Sort.Direction.ASC, "name"))).with(pageable);
+
         if (search != null && !search.isEmpty()) {
-            String sanitizedSearch = search.replaceAll("[^a-zA-Z0-9 ]", "");
+
+            String sanitizedSearch = Pattern.quote(search);
             query.addCriteria(Criteria.where("name").regex(sanitizedSearch, "i"));
         }
 

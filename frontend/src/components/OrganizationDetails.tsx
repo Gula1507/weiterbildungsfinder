@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {Organization} from "../types/Organization.ts";
 import "../styles/OrganizationDetails.css"
+import StarsRating from "./StarsRating.tsx";
 
 function OrganizationDetails() {
     const {id} = useParams();
@@ -55,7 +56,6 @@ function OrganizationDetails() {
 
     return (
         <div>
-            <h2>{organization?.name}</h2>
             <button className="review-button" onClick={() => navigate(`/add-review/${id}`,
                 {state: {organization}})}>
                 Bewerten
@@ -67,6 +67,8 @@ function OrganizationDetails() {
             {deleteSuccess && (
                 <p className="success-message">Der Anbieter wurde gelöscht! Weiterleitung auf die Startseite...</p>
             )}
+            <h2>{organization?.name}</h2>
+
             <p>
                 <br/>
                 <strong>Webseite:</strong> <a
@@ -82,20 +84,20 @@ function OrganizationDetails() {
             <p><strong>Email:</strong> {organization?.email}</p>
             <p><strong>Adresse:</strong> {organization?.address}</p>
 
-            <br/>
+
             <p>
                 <strong>Durchschnitsnote</strong>: {(organization?.averageRating === null || organization?.averageRating === 0.0)
                 ? "noch keine Bewertung"
-                : organization?.averageRating.toFixed(1)}</p>
+
+                : (<StarsRating rating={parseFloat(organization?.averageRating.toFixed(1) as string)}/>)}
+            </p>
 
             <p><strong>Rezensionen</strong> {organization?.reviews && organization.reviews.length > 0
                 ?
                 (<ul className="review-list">
                     {organization?.reviews.map((r, index) => (
                         <li key={index} className="review-item">{r.author}: {r.comment} <br/>
-                            <div className="stars">
-                                {"★".repeat(r.starNumber) + "☆".repeat(5 - r.starNumber)}
-                            </div>
+                            <StarsRating rating={r.starNumber}/>
                         </li>))}
                 </ul>)
                 : "noch keine Rezensionen vorhanden"}</p>

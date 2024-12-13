@@ -39,7 +39,8 @@ public class OrganizationService {
         pageable = PageRequest.of(page, size);
         Query query = new Query().with(Sort.by(new Sort.Order(Sort.Direction.ASC, "name"))).with(pageable);
         if (search != null && !search.isEmpty()) {
-            query.addCriteria(Criteria.where("name").regex(search, "i"));
+            String sanitizedSearch = search.replaceAll("[^a-zA-Z0-9 ]", "");
+            query.addCriteria(Criteria.where("name").regex(sanitizedSearch, "i"));
         }
 
         query.collation(Collation.of("en").strength(Collation.ComparisonLevel.secondary()));

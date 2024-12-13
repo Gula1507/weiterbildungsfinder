@@ -20,9 +20,8 @@ public class OrganizationController {
     private final OrganizationService organizationService;
 
     @GetMapping
-    public Page<Organization> getAllOrganizations(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
-        return organizationService.getAllOrganizations(page, size);
+    public Page<Organization> getAllOrganizations(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false, defaultValue = "") String search) {
+        return organizationService.getAllOrganizations(page, size, search);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

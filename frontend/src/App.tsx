@@ -36,9 +36,15 @@ function App() {
         loadOrganizations(0, 10, searchText);
     }, [searchText]);
 
+    function logout() {
+        axios.post("api/users/logout")
+            .then(()=>console.log("Logged out"))
+            .catch(e=>console.log(e))
+    }
     return (
         <div className="app-container">
             <Header/>
+            <button onClick={logout}>Logout</button>
             <Routes>
                 <Route
                     path="/"

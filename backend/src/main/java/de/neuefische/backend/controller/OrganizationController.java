@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/organizations")
@@ -24,8 +23,7 @@ public class OrganizationController {
     public Page<Organization> getAllOrganizations(@RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "10") int size,
                                                   @RequestParam(required = false, defaultValue = "") String search) {
-        String sanitizedSearch = Pattern.quote(search);
-        return organizationService.getAllOrganizations(page, size, sanitizedSearch);
+        return organizationService.getAllOrganizations(page, size, search);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

@@ -8,6 +8,8 @@ import OrganizationForm from "./components/OrganizationForm.tsx";
 import OrganizationDetails from "./components/OrganizationDetails.tsx";
 import Header from "./components/Header.tsx";
 import ReviewForm from "./components/ReviewForm.tsx";
+import LoginPage from "./components/LoginPage.tsx";
+import RegisterPage from "./components/RegisterPage.tsx";
 
 
 function App() {
@@ -47,6 +49,8 @@ function App() {
                 <Route path="/edit-organization/:id" element={<OrganizationForm/>}/>
                 <Route path="/organizations/:id" element={<OrganizationDetails/>}/>
                 <Route path="/add-review/:id" element={<ReviewForm/>}/>
+                <Route path="/login" element={<LoginPage/>}/>
+                <Route path="/register" element={<RegisterPage/>}/>
             </Routes>
         </div>
     );

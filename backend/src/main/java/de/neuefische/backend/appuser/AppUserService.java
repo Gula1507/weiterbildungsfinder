@@ -22,15 +22,15 @@ public class AppUserService {
     public AppUserResponse getLoggedInUser() {
         var principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AppUser appUser = findByUsername(principal.getUsername());
-        return new AppUserResponse(appUser.getId(), appUser.getUsername());
+        return new AppUserResponse(appUser.getId(), appUser.getUsername(),appUser.getRole());
     }
 
     public AppUserResponse register(AppUserRegister appUserRegister) {
         AppUser appUser = new AppUser();
         appUser.setUsername(appUserRegister.username());
         appUser.setPassword(passwordEncoder.encode(appUserRegister.password()));
+        appUser.setRole(AppUserRole.USER);
         appUser = appUserRepository.save(appUser);
-        return new AppUserResponse(appUser.getId(), appUser.getUsername());
-
+        return new AppUserResponse(appUser.getId(), appUser.getUsername(),appUser.getRole());
     }
 }

@@ -1,6 +1,7 @@
 package de.neuefische.backend.appuser;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +19,11 @@ public class AppUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AppUser appUser = appUserService.findByUsername(username);
-        return new User(appUser.getUsername(), appUser.getPassword(), List.of());
+        return new User(
+                appUser.getUsername(),
+                appUser.getPassword(),
+                List.of(
+                        new SimpleGrantedAuthority("ROLE "+appUser.getRole())
+                ));
     }
 }

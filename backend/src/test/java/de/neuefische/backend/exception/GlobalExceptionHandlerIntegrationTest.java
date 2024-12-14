@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -18,6 +19,7 @@ class GlobalExceptionHandlerIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
+    @WithMockUser(username = "testuser", roles = "USER")
     void handleException_shouldReturnErrorMessage_whenUriNotFound() throws Exception {
         ErrorMessage errorMessage1 = new ErrorMessage("An unexpected error occurred: No static resource api/organizationsss.");
         mockMvc.perform(get("/api/organizationsss"))

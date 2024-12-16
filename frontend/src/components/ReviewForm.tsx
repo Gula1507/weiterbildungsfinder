@@ -57,7 +57,7 @@ function ReviewForm() {
                         </button>
                     ))}
                 </div>
-                <p>Anzahl Sterne: {starNumber || "noch keine"}</p>
+                <div>Anzahl Sterne: {starNumber || "noch keine"}</div>
                 <input
                     type="text"
                     value={comment}

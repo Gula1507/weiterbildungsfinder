@@ -1,5 +1,5 @@
 import './App.css'
-import {Link, Route, Routes, useNavigate} from "react-router-dom";
+import {Link, Route, Routes} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Organization} from "./types/Organization.ts";
@@ -18,9 +18,7 @@ function App() {
     const [loading, setLoading] = useState<boolean>(true);
     const [totalPages, setTotalPages] = useState<number>(0);
     const [searchText, setSearchText] = useState<string>("");
-    const navigate = useNavigate();
     const [appUser, setAppUser] = useState<AppUser | null | undefined>(undefined);
-
     const loadOrganizations = (page: number, size: number, searchText: string) => {
         setLoading(true);
         axios.get(`/api/organizations?page=${page}&size=${size}&search=${searchText}`)
@@ -45,10 +43,8 @@ function App() {
         }
     }, [appUser]);
 
-
-
     function loadMe() {
-        axios.get("api/users/me")
+        axios.get("/api/users/me")
             .then(r => {
                 console.log("API response:", r.data);
                 setAppUser(r.data);
@@ -57,7 +53,7 @@ function App() {
     }
 
     function logout() {
-        axios.post("api/users/logout")
+        axios.post("/api/users/logout")
             .then(() => console.log("Logged out"))
             .catch(e => console.log(e))
             .finally(()=>setAppUser(null))
@@ -72,25 +68,27 @@ function App() {
         })
             .then(() => {
                 loadMe()
-                navigate("/")
             })
             .catch(e => {
                 setAppUser(null)
                 console.error(e)
             })
     }
-    console.log("appUser before passing to OrganizationDetails:", appUser);
-    console.log("role aus App:", appUser?.appUserRole);
+
+    const handleLogin = (user: AppUser) => {
+        setAppUser(user);
+    };
+
     return (
         <div className="app-container">
             <Header/>
             {appUser &&
             <button onClick={logout}>Logout</button>}
             {!appUser&&
-            <>
-            <Link to={"/login"}>Login</Link>
-            <Link to={"/register"}>Registrieren</Link>
-            </>}
+            <div className="link-container">
+            <Link to={"/login"} className="link">Login</Link>
+            <Link to={"/register"} className="link">Registrieren</Link>
+            </div>}
             <Routes>
                 <Route
                     path="/"
@@ -99,7 +97,7 @@ function App() {
                 />
                 <Route path="/add-organization" element={<OrganizationForm/>}/>
                 <Route path="/edit-organization/:id" element={<OrganizationForm/>}/>
-                <Route path="/organizations/:id" element={<OrganizationDetails appUser={appUser} />}/>
+                <Route path="/organizations/:id" element={<OrganizationDetails appUser={appUser} onLogin={handleLogin} />}/>
                 <Route path="/add-review/:id" element={<ReviewForm/>}/>
                 <Route path="/login" element={<LoginPage login={login}/>}/>
                 <Route path="/register" element={<RegisterPage/>}/>

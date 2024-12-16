@@ -1,34 +1,17 @@
-import axios from "axios";
 import {FormEvent, useState} from "react";
-import {useNavigate} from "react-router-dom";
 
 
-function LoginPage() {
+type LoginPageProps = {
+    login: (username:string, password:string)=>void;
+}
+
+function LoginPage(props:Readonly<LoginPageProps>) {
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const navigate = useNavigate();
-
-    function login() {
-        axios.post("/api/users/login", {}, {
-            auth: {
-                username: username,
-                password: password
-            }
-        })
-            .then(() => {
-                setPassword("");
-                setUsername("");
-                navigate("/")
-            })
-            .catch(e => {
-                setPassword("");
-                console.error(e)
-            })
-    }
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        login();
+        props.login(username, password);
     }
 
     return (

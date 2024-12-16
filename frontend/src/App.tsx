@@ -1,5 +1,5 @@
 import './App.css'
-import {Route, Routes} from "react-router-dom";
+import {Link, Route, Routes, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Organization} from "./types/Organization.ts";
@@ -10,6 +10,7 @@ import Header from "./components/Header.tsx";
 import ReviewForm from "./components/ReviewForm.tsx";
 import LoginPage from "./components/LoginPage.tsx";
 import RegisterPage from "./components/RegisterPage.tsx";
+import {AppUser} from "./types/AppUser.ts";
 
 
 function App() {
@@ -17,6 +18,8 @@ function App() {
     const [loading, setLoading] = useState<boolean>(true);
     const [totalPages, setTotalPages] = useState<number>(0);
     const [searchText, setSearchText] = useState<string>("");
+    const navigate = useNavigate();
+    const [appUser, setAppUser] = useState<AppUser | null | undefined>(undefined);
 
     const loadOrganizations = (page: number, size: number, searchText: string) => {
         setLoading(true);
@@ -36,15 +39,58 @@ function App() {
         loadOrganizations(0, 10, searchText);
     }, [searchText]);
 
+    useEffect(() => {
+        if (!appUser) {
+            loadMe();
+        }
+    }, [appUser]);
+
+
+
+    function loadMe() {
+        axios.get("api/users/me")
+            .then(r => {
+                console.log("API response:", r.data);
+                setAppUser(r.data);
+            })
+            .catch(e => console.error(e))
+    }
+
     function logout() {
         axios.post("api/users/logout")
-            .then(()=>console.log("Logged out"))
-            .catch(e=>console.log(e))
+            .then(() => console.log("Logged out"))
+            .catch(e => console.log(e))
+            .finally(()=>setAppUser(null))
     }
+
+    function login(username: string, password: string) {
+        axios.post("/api/users/login", {}, {
+            auth: {
+                username: username,
+                password: password
+            }
+        })
+            .then(() => {
+                loadMe()
+                navigate("/")
+            })
+            .catch(e => {
+                setAppUser(null)
+                console.error(e)
+            })
+    }
+    console.log("appUser before passing to OrganizationDetails:", appUser);
+    console.log("role aus App:", appUser?.appUserRole);
     return (
         <div className="app-container">
             <Header/>
-            <button onClick={logout}>Logout</button>
+            {appUser &&
+            <button onClick={logout}>Logout</button>}
+            {!appUser&&
+            <>
+            <Link to={"/login"}>Login</Link>
+            <Link to={"/register"}>Registrieren</Link>
+            </>}
             <Routes>
                 <Route
                     path="/"
@@ -53,9 +99,9 @@ function App() {
                 />
                 <Route path="/add-organization" element={<OrganizationForm/>}/>
                 <Route path="/edit-organization/:id" element={<OrganizationForm/>}/>
-                <Route path="/organizations/:id" element={<OrganizationDetails/>}/>
+                <Route path="/organizations/:id" element={<OrganizationDetails appUser={appUser} />}/>
                 <Route path="/add-review/:id" element={<ReviewForm/>}/>
-                <Route path="/login" element={<LoginPage/>}/>
+                <Route path="/login" element={<LoginPage login={login}/>}/>
                 <Route path="/register" element={<RegisterPage/>}/>
             </Routes>
         </div>

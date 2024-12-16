@@ -4,8 +4,14 @@ import axios from "axios";
 import {Organization} from "../types/Organization.ts";
 import "../styles/OrganizationDetails.css"
 import StarsRating from "./StarsRating.tsx";
+import {AppUser} from "../types/AppUser.ts";
 
-function OrganizationDetails() {
+type OrganizationDetailsProps = {
+    appUser: AppUser|null|undefined;
+}
+
+
+function OrganizationDetails(props:OrganizationDetailsProps) {
     const {id} = useParams();
     const navigate = useNavigate();
     const [organization, setOrganization] = useState<Organization | null>(null);

@@ -36,9 +36,7 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
         fetchOrganizationDetails();
     }, [id]);
 
-
     if (loading) return <p>Loading organization details...</p>;
-
 
     if (error) return <p>Error loading organization: {error}</p>;
 

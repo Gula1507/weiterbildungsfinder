@@ -5,37 +5,41 @@ import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 
 type HomeProps = {
-    organizations: Organization[]
-    loading: boolean
-    loadOrganizations: (page: number, size: number) => void;
+    organizations: Organization[];
+    loading: boolean;
+    loadOrganizations: (page: number, size: number, searchText: string) => void;
     totalPages: number;
-}
+    searchText: string;
+    setSearchText: (text: string) => void;
+
+};
 
 function Home(props: HomeProps) {
     const navigate = useNavigate();
 
-    const [searchText, setSearchText] = useState("");
     const [page, setPage] = useState<number>(0);
     const [size] = useState<number>(10);
-
-
+    const [localSearchText, setLocalSearchText] = useState<string>(props.searchText);
     const handleAddOrganization = () => {
-        navigate("add-organization")
-    }
+        navigate("add-organization");
+    };
 
-    const filteredOrganizations: Organization[] = props.organizations
-        .filter((organization) => organization.name.toLowerCase().includes(searchText.toLowerCase()));
+
+    const handleSearchSubmit = () => {
+        props.loadOrganizations(0, size, localSearchText);
+        setPage(0);
+        props.setSearchText(localSearchText);
+    };
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 0 && newPage < props.totalPages) {
             setPage(newPage);
-            props.loadOrganizations(newPage, size);
+            props.loadOrganizations(newPage, size, props.searchText);
         }
     };
 
     return (
         <>
-
             <div className="slogan-container">
                 <img
                     className="small-image"
@@ -60,15 +64,19 @@ function Home(props: HomeProps) {
                     <>
                         <input
                             type="text"
-                            onChange={(e) => setSearchText(e.target.value)}
+                            value={localSearchText}
+                            onChange={(e) => setLocalSearchText(e.target.value)}
                             placeholder="Nach einem Weiterbildungsanbieter suchen"
                         />
+                        <button onClick={handleSearchSubmit}>Suchen</button>
 
-                        {filteredOrganizations.length > 0 ? (
-                            <OrganizationGallery organizations={filteredOrganizations}/>
+
+                        {props.organizations.length > 0 ? (
+                            <OrganizationGallery organizations={props.organizations}/>
                         ) : (
                             "Keine Weiterbildungsanbieter gefunden"
                         )}
+
                         <button className="add" onClick={handleAddOrganization}>
                             + NEU
                         </button>

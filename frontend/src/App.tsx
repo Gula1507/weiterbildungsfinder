@@ -11,26 +11,28 @@ import ReviewForm from "./components/ReviewForm.tsx";
 
 
 function App() {
-    const [organizations, setOrganizations] = useState<Organization[]>([])
+    const [organizations, setOrganizations] = useState<Organization[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [totalPages, setTotalPages] = useState<number>(0);
+    const [searchText, setSearchText] = useState<string>("");
 
-    const loadOrganizations = (page: number, size: number) => {
+    const loadOrganizations = (page: number, size: number, searchText: string) => {
         setLoading(true);
-        axios.get(`/api/organizations?page=${page}&size=${size}&sort=name,asc`).then((response) => {
-            setOrganizations(response.data.content);
-            setTotalPages(response.data.totalPages);
-            setLoading(false);
-            }
-        )
+        axios.get(`/api/organizations?page=${page}&size=${size}&search=${searchText}`)
+            .then((response) => {
+                setOrganizations(response.data.content);
+                setTotalPages(response.data.totalPages);
+                setLoading(false);
+            })
             .catch((error) => {
                 console.error(error);
                 setLoading(false);
-            })
-    }
+            });
+    };
+
     useEffect(() => {
-        loadOrganizations(0, 10)
-    }, [])
+        loadOrganizations(0, 10, searchText);
+    }, [searchText]);
 
     return (
         <div className="app-container">
@@ -39,8 +41,7 @@ function App() {
                 <Route
                     path="/"
                     element={<Home organizations={organizations} loading={loading} loadOrganizations={loadOrganizations}
-                                   totalPages={totalPages}/>}
-
+                                   totalPages={totalPages} searchText={searchText} setSearchText={setSearchText}/>}
                 />
                 <Route path="/add-organization" element={<OrganizationForm/>}/>
                 <Route path="/edit-organization/:id" element={<OrganizationForm/>}/>
@@ -48,7 +49,7 @@ function App() {
                 <Route path="/add-review/:id" element={<ReviewForm/>}/>
             </Routes>
         </div>
-    )
+    );
 }
 
-export default App
+export default App;

@@ -16,12 +16,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Collation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Service
@@ -33,10 +35,17 @@ public class OrganizationService {
     private static final Logger logger = LoggerFactory.getLogger(OrganizationService.class);
 
 
-    public Page<Organization> getAllOrganizations(int page, int size) {
+    public Page<Organization> getAllOrganizations(int page, int size, String search) {
         Pageable pageable;
         pageable = PageRequest.of(page, size);
         Query query = new Query().with(Sort.by(new Sort.Order(Sort.Direction.ASC, "name"))).with(pageable);
+
+        if (search != null && !search.isEmpty()) {
+
+            String sanitizedSearch = Pattern.quote(search);
+            query.addCriteria(Criteria.where("name").regex(sanitizedSearch, "i"));
+        }
+
         query.collation(Collation.of("en").strength(Collation.ComparisonLevel.secondary()));
         List<Organization> sortedOrganizations = mongoTemplate.find(query, Organization.class);
 

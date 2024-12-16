@@ -50,7 +50,7 @@ class OrganizationServiceTest {
 
         when(mockedMongoTemplate.find(any(Query.class), eq(Organization.class))).thenReturn(List.of());
         when(mockedOrganisationRepo.count()).thenReturn(0L);
-        Page<Organization> actual = organizationService.getAllOrganizations(0, 10);
+        Page<Organization> actual = organizationService.getAllOrganizations(0, 10, "");
 
         verify(mockedMongoTemplate).find(any(Query.class), eq(Organization.class));
         assertEquals(expected, actual);
@@ -72,7 +72,7 @@ class OrganizationServiceTest {
 
         when(mockedMongoTemplate.find(any(Query.class), eq(Organization.class))).thenReturn(sortedOrganizations);
 
-        Page<Organization> actual = organizationService.getAllOrganizations(0, 10);
+        Page<Organization> actual = organizationService.getAllOrganizations(0, 10, "");
 
         verify(mockedMongoTemplate).find(any(Query.class), eq(Organization.class));
 

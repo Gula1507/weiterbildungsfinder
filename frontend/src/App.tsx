@@ -1,5 +1,5 @@
 import './App.css'
-import {Link, Route, Routes} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Organization} from "./types/Organization.ts";
@@ -80,15 +80,10 @@ function App() {
     };
 
     return (
+
         <div className="app-container">
-            <Header/>
-            {appUser &&
-            <button onClick={logout}>Logout</button>}
-            {!appUser&&
-            <div className="link-container">
-            <Link to={"/login"} className="link">Login</Link>
-            <Link to={"/register"} className="link">Registrieren</Link>
-            </div>}
+            <Header appUser={appUser} logout={logout}/>
+
             <Routes>
                 <Route
                     path="/"

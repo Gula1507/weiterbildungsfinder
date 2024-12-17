@@ -37,7 +37,7 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(authorities = "ROLE ADMIN")
     void testDeleteOrganizationEndpointAuthorizedForAdmin() throws Exception {
         mockMvc.perform(delete("/api/organizations/1"))
                 .andExpect(status().isNotFound());

@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser(username = "testuser", roles = "ADMIN")
+@WithMockUser(username = "testuser", authorities = "ROLE ADMIN")
 class OrganizationControllerIntegrationTest {
 
     @Autowired
@@ -191,7 +191,11 @@ class OrganizationControllerIntegrationTest {
                 }
                 """;
 
-        mockMvc.perform(put("/api/organizations/{id}", id).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(requestBody)).andExpect(status().isOk()).andExpect(content().json(expectedResponseBody)).andExpect(jsonPath("$.id").value(id));
+        mockMvc.perform(put("/api/organizations/{id}", id).contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponseBody))
+                .andExpect(jsonPath("$.id").value(id));
     }
 
     @Test
@@ -248,7 +252,9 @@ class OrganizationControllerIntegrationTest {
     void refreshOrganizations_shouldReturnEmptyList_whenNoNewOrganizations() throws Exception {
         organizationRepository.save(testOrganization);
         when(mockedApiService.loadAllOrganizations()).thenReturn(List.of(testOrganization));
-        mockMvc.perform(put("/api/organizations/refresh")).andExpect(status().isOk()).andExpect(content().json("[]"));
+        mockMvc.perform(put("/api/organizations/refresh"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
     }
 
     @Test

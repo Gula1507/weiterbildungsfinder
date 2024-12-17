@@ -1,6 +1,5 @@
 package de.neuefische.backend.config;
 
-import de.neuefische.backend.appuser.AppUserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,13 +17,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
+String adminRole="ROLE ADMIN";
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(HttpMethod.PUT,"/api/organizations/{id}").hasRole(AppUserRole.ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE,"/api/organizations/{id}").hasRole(AppUserRole.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT,"/api/organizations/*").hasAuthority(adminRole)
+                        .requestMatchers(HttpMethod.DELETE,"/api/organizations/*").hasAuthority(adminRole)
+                        .requestMatchers(HttpMethod.PUT,"/api/organizations/refresh").hasAuthority(adminRole)
                         .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/organizations/**").permitAll()
                         .anyRequest().authenticated())

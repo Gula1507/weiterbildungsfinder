@@ -1,9 +1,8 @@
-package de.neuefische.backend.controller;
+package de.neuefische.backend.organization;
 
-import de.neuefische.backend.model.Organization;
-import de.neuefische.backend.model.OrganizationDTO;
-import de.neuefische.backend.model.ReviewDTO;
-import de.neuefische.backend.service.OrganizationService;
+import de.neuefische.backend.organization.model.Organization;
+import de.neuefische.backend.organization.model.OrganizationDTO;
+import de.neuefische.backend.organization.model.ReviewDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

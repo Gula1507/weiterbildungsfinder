@@ -1,8 +1,8 @@
 package de.neuefische.backend.api.service;
 
 import de.neuefische.backend.api.exception.ApiResponseException;
-import de.neuefische.backend.model.Organization;
-import de.neuefische.backend.service.IdService;
+import de.neuefische.backend.organization.IdService;
+import de.neuefische.backend.organization.model.Organization;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;

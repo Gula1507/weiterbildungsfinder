@@ -1,6 +1,6 @@
-package de.neuefische.backend.repository;
+package de.neuefische.backend.organization;
 
-import de.neuefische.backend.model.Organization;
+import de.neuefische.backend.organization.model.Organization;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

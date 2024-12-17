@@ -2,10 +2,7 @@ package de.neuefische.backend.organization;
 
 import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.exception.OrganizationNotFoundException;
-import de.neuefische.backend.organization.model.Organization;
-import de.neuefische.backend.organization.model.OrganizationDTO;
-import de.neuefische.backend.organization.model.Review;
-import de.neuefische.backend.organization.model.ReviewDTO;
+import de.neuefische.backend.organization.model.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +66,7 @@ public class OrganizationService {
     }
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {
-        Organization organization = new Organization(idService.generateRandomId(), organizationDTO.name(),
+        Organization organization = new Organization(idService.generateRandomId(), null, organizationDTO.name(),
                 organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(), new ArrayList<>(), 0.0);
         return organizationRepo.save(organization);
     }
@@ -83,7 +80,7 @@ public class OrganizationService {
 
     public Organization updateOrganizationFromDTO(String id, OrganizationDTO organizationDTO) {
         if (organizationRepo.existsById(id)) {
-            Organization updatedOrganization = new Organization(id, organizationDTO.name(),
+            Organization updatedOrganization = new Organization(id,null, organizationDTO.name(),
                     organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(),
                     organizationDTO.reviews(), organizationDTO.averageRating());
             return organizationRepo.save(updatedOrganization);
@@ -111,6 +108,10 @@ public class OrganizationService {
         Organization actualisedOrganization = organization.withReviews(reviews).withAverageRating(averageRating);
         organizationRepo.save(actualisedOrganization);
         return actualisedOrganization;
+    }
+
+    public List<Course> getCourses(String id) {
+        return apiService.loadCourses(id);
     }
 }
 

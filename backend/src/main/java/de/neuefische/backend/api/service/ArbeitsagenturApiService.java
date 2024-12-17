@@ -1,11 +1,9 @@
 package de.neuefische.backend.api.service;
 
-import de.neuefische.backend.api.dto.ApiResponse;
-import de.neuefische.backend.api.dto.ApiResponseCourseOffer;
-import de.neuefische.backend.api.dto.ApiResponseDetails;
-import de.neuefische.backend.api.dto.ApiResponseOrganization;
+import de.neuefische.backend.api.dto.*;
 import de.neuefische.backend.api.exception.ApiResponseException;
 import de.neuefische.backend.organization.IdService;
+import de.neuefische.backend.organization.model.Course;
 import de.neuefische.backend.organization.model.Organization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,16 +56,63 @@ public class ArbeitsagenturApiService {
         return apiOrganizations.stream().distinct().toList();
     }
 
+    public List<Course> loadCourses(String id) {
+
+       String urlPage = "?page=0&size=20"+"&ban="+id;
+       List <Course> allCourses=new ArrayList<>();
+
+        while (urlPage != null) {
+            try {
+                ApiResponse response =
+                        restClient.get().uri(urlPage).header("X-API-Key", "infosysbub-wbsuche").retrieve().body(ApiResponse.class);
+
+                if (response == null || response.responseContent() == null || response.responseContent().details() == null) {
+                    logger.error("Fehler: responseContent ist null für die Seite {}", urlPage);
+                    break;
+                }
+
+                List<ApiResponseDetails> details = response.responseContent().details();
+                List <Course> courses=new ArrayList<>();
+                for(ApiResponseDetails apiResponseDetails:details) {
+                    courses.add(new Course(apiResponseDetails.courseOffer().courseId(),
+                            apiResponseDetails.courseOffer().courseName(),
+                            apiResponseDetails.courseOffer().courseContent(),
+                            apiResponseDetails.courseOffer().courseDegree(),
+                            apiResponseDetails.courseOffer().educationVoucher(),
+                            new CourseType(apiResponseDetails.courseOffer().courseType().courseTypeName()),
+                            apiResponseDetails.courseOffer().apiResponseOrganization().id()));}
+
+
+
+
+                allCourses.addAll(courses);
+                urlPage = getNextPageUrl(response, id);
+            } catch (Exception e) {
+                throw new ApiResponseException();
+            }
+        }
+
+        return allCourses;
+    }
     public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
 
-        return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.name(),
+        return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.id(),
+                a.name(),
                 a.homepage(), a.email(),
+                a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " "
+                + a.address().addressDetails().city(), new ArrayList<>(),
+                0.0)).toList();
+    }
 
-                a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city(), new ArrayList<>(), 0.0)).toList();
+    public String getNextPageUrl(ApiResponse apiResponse,String id) {
+        if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < 2) {
+            return "?page=" + (apiResponse.page().number() + 1) + "&size=20"+"&ban="+id;
+        }
+        return null;
     }
 
     public String getNextPageUrl(ApiResponse apiResponse) {
-        if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < 10) {
+        if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < 2) {
             return "?page=" + (apiResponse.page().number() + 1) + "&size=20";
         }
         return null;

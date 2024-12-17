@@ -4,8 +4,15 @@ import axios from "axios";
 import {Organization} from "../types/Organization.ts";
 import "../styles/OrganizationDetails.css"
 import StarsRating from "./StarsRating.tsx";
+import {AppUser} from "../types/AppUser.ts";
 
-function OrganizationDetails() {
+type OrganizationDetailsProps = {
+    appUser: AppUser|null|undefined;
+    onLogin: (user: AppUser) => void;
+}
+
+
+function OrganizationDetails(props:OrganizationDetailsProps) {
     const {id} = useParams();
     const navigate = useNavigate();
     const [organization, setOrganization] = useState<Organization | null>(null);
@@ -29,9 +36,7 @@ function OrganizationDetails() {
         fetchOrganizationDetails();
     }, [id]);
 
-
     if (loading) return <p>Loading organization details...</p>;
-
 
     if (error) return <p>Error loading organization: {error}</p>;
 
@@ -56,14 +61,29 @@ function OrganizationDetails() {
 
     return (
         <div>
-            <button className="review-button" onClick={() => navigate(`/add-review/${id}`,
-                {state: {organization}})}>
+
+            <button
+                className="review-button"
+                onClick={() => {
+                    if (!props.appUser) {
+
+                        navigate('/login', {state: {from: `/add-review/${id}`, organization}});
+
+                    } else {
+
+                        navigate(`/add-review/${id}`, {state: {organization}});
+                    }
+                }}
+            >
                 Bewerten
             </button>
-            <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
-                Bearbeiten
-            </button>
-            <button onClick={deleteOrganization} className="delete-button">Löschen</button>
+
+            {props.appUser?.appUserRole === "ADMIN" &&
+                <button onClick={() => navigate(`/edit-organization/${id}`, {state: {organization}})}>
+                    Bearbeiten
+                </button>}
+            {props.appUser?.appUserRole === "ADMIN" &&
+                <button onClick={deleteOrganization} className="delete-button">Löschen</button>}
             {deleteSuccess && (
                 <p className="success-message">Der Anbieter wurde gelöscht! Weiterleitung auf die Startseite...</p>
             )}
@@ -85,14 +105,14 @@ function OrganizationDetails() {
             <p><strong>Adresse:</strong> {organization?.address}</p>
 
 
-            <p>
+            <div>
                 <strong>Durchschnitsnote</strong>: {(organization?.averageRating === null || organization?.averageRating === 0.0)
                 ? "noch keine Bewertung"
 
                 : (<StarsRating rating={parseFloat(organization?.averageRating.toFixed(1) as string)}/>)}
-            </p>
+            </div>
 
-            <p><strong>Rezensionen</strong> {organization?.reviews && organization.reviews.length > 0
+            <div><strong>Rezensionen</strong> {organization?.reviews && organization.reviews.length > 0
                 ?
                 (<ul className="review-list">
                     {organization?.reviews.map((r, index) => (
@@ -100,7 +120,7 @@ function OrganizationDetails() {
                             <StarsRating rating={r.starNumber}/>
                         </li>))}
                 </ul>)
-                : "noch keine Rezensionen vorhanden"}</p>
+                : "noch keine Rezensionen vorhanden"}</div>
         </div>
     );
 }

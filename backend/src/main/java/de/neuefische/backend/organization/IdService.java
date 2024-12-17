@@ -1,4 +1,4 @@
-package de.neuefische.backend.service;
+package de.neuefische.backend.organization;
 
 import org.springframework.stereotype.Service;
 

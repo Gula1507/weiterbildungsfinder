@@ -1,12 +1,11 @@
-package de.neuefische.backend.service;
+package de.neuefische.backend.organization;
 
 import de.neuefische.backend.api.service.ArbeitsagenturApiService;
 import de.neuefische.backend.exception.OrganizationNotFoundException;
-import de.neuefische.backend.model.Organization;
-import de.neuefische.backend.model.OrganizationDTO;
-import de.neuefische.backend.model.Review;
-import de.neuefische.backend.model.ReviewDTO;
-import de.neuefische.backend.repository.OrganizationRepository;
+import de.neuefische.backend.organization.model.Organization;
+import de.neuefische.backend.organization.model.OrganizationDTO;
+import de.neuefische.backend.organization.model.Review;
+import de.neuefische.backend.organization.model.ReviewDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

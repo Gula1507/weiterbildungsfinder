@@ -1,4 +1,4 @@
-package de.neuefische.backend.model;
+package de.neuefische.backend.organization.model;
 
 import org.junit.jupiter.api.Test;
 

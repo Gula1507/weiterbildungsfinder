@@ -58,8 +58,7 @@ function ReviewForm() {
                     ))}
                 </div>
                 <div>Anzahl Sterne: {starNumber || "noch keine"}</div>
-                <input
-                    type="text"
+                <textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder={"Dein Kommentar"}

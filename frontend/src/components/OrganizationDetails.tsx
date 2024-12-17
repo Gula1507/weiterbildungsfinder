@@ -105,14 +105,15 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
             <p><strong>Adresse:</strong> {organization?.address}</p>
 
 
-            <div>
-                <strong>Durchschnitsnote</strong>: {(organization?.averageRating === null || organization?.averageRating === 0.0)
+            <div className="spacing">
+                <strong>Durchschnitsnote: </strong>
+                {(organization?.averageRating === null || organization?.averageRating === 0.0)
                 ? "noch keine Bewertung"
 
                 : (<StarsRating rating={parseFloat(organization?.averageRating.toFixed(1) as string)}/>)}
             </div>
 
-            <div><strong>Rezensionen</strong> {organization?.reviews && organization.reviews.length > 0
+            <div><strong>Rezensionen: </strong> {organization?.reviews && organization.reviews.length > 0
                 ?
                 (<ul className="review-list">
                     {organization?.reviews.map((r, index) => (

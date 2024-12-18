@@ -47,12 +47,16 @@ function Home(props: HomeProps) {
                     alt="Icons representing home features such as house, magnifying glass, thumbs up"
                 />
                 <div className="slogan">
-                    <h2>Entdecke KURSDA</h2>
+                    <h2> <span className="kursda-titel"> KURS<span className="da-element">DA!</span></span> - Dein Vergleichsportal für
+                        Weiterbildungsanbieter</h2>
                     <p>
-                        Finde heraus, welche Weiterbildungsmöglichkeiten es in deiner Region gibt – übersichtlich und
-                        einfach.
-                        Hol dir neue Fähigkeiten, bleib motiviert und gestalte deine Zukunft aktiv – jetzt und für die
-                        kommenden Jahre.
+
+                        Auf der Suche nach der passenden Weiterbildung?
+                        Finde heraus, wie deine gewünschte Bildungseinrichtung abschneidet!
+                    </p>
+                    <p>
+                        Schon eine Weiterbildung abgeschlossen?
+                        Hilf anderen, indem du deinen Anbieter bewertest oder die Liste erweiterst.
                     </p>
                 </div>
             </div>

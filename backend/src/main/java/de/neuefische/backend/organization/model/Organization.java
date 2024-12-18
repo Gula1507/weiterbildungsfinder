@@ -8,8 +8,16 @@ import java.util.List;
 import java.util.Objects;
 
 @With
-public record Organization(String id, String name, String homepage, String email, String address,
-                           List<@Valid Review> reviews, double averageRating) {
+public record Organization(String id,
+                           Long apiId,
+                           String name,
+                           String homepage,
+                           String email,
+                           String address,
+                           List<@Valid Review> reviews,
+                           double averageRating,
+                           List <Course> courses
+                          ) {
     @Override
     public boolean equals(Object o) {
         if (this == o)

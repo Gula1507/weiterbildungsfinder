@@ -58,4 +58,5 @@ public class OrganizationController {
     public Organization addReview(@PathVariable String id, @RequestBody @Valid ReviewDTO reviewDTO) {
         return organizationService.addReviewToOrganization(id, reviewDTO);
     }
+
 }

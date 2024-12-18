@@ -1,11 +1,9 @@
 package de.neuefische.backend.api.service;
 
-import de.neuefische.backend.api.dto.ApiResponse;
-import de.neuefische.backend.api.dto.ApiResponseCourseOffer;
-import de.neuefische.backend.api.dto.ApiResponseDetails;
-import de.neuefische.backend.api.dto.ApiResponseOrganization;
+import de.neuefische.backend.api.dto.*;
 import de.neuefische.backend.api.exception.ApiResponseException;
 import de.neuefische.backend.organization.IdService;
+import de.neuefische.backend.organization.model.Course;
 import de.neuefische.backend.organization.model.Organization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +28,10 @@ public class ArbeitsagenturApiService {
     }
 
     public List<Organization> loadAllOrganizations() {
-        List<Organization> apiOrganizations = new ArrayList<>();
-        String urlPage = "?page=0&size=20";
+        List<Organization> organizations = new ArrayList<>();
+        List <Course> allCourses=new ArrayList<>();
 
+        String urlPage = "?page=0&size=20";
         while (urlPage != null) {
             try {
                 ApiResponse response =
@@ -44,30 +43,72 @@ public class ArbeitsagenturApiService {
                 }
 
                 List<ApiResponseDetails> details = response.responseContent().details();
-
+                List <Course> courses=new ArrayList<>();
                 List<ApiResponseOrganization> apiResponseOrganizations =
                         details.stream().map(ApiResponseDetails::courseOffer).map(ApiResponseCourseOffer::apiResponseOrganization).distinct().toList();
 
-                apiOrganizations.addAll(convertApiOrganizationsToOrganizations(apiResponseOrganizations));
+                for(ApiResponseDetails apiResponseDetails:details) {
+                    courses.add(new Course(idService.generateRandomId(),
+                            apiResponseDetails.courseOffer().courseId(),
+                            apiResponseDetails.courseOffer().courseName(),
+                            apiResponseDetails.courseOffer().courseContent(),
+                            apiResponseDetails.courseOffer().courseDegree(),
+                            apiResponseDetails.courseOffer().educationVoucher(),
+                            new CourseType(apiResponseDetails.courseOffer().courseType().courseTypeName()),
+                            apiResponseDetails.courseOffer().apiResponseOrganization().id()));}
+                allCourses.addAll(courses);
+                organizations.addAll(convertApiOrganizationsToOrganizations(apiResponseOrganizations));
+
                 urlPage = getNextPageUrl(response);
             } catch (Exception e) {
                 throw new ApiResponseException();
             }
         }
+        List<Course> uniqueCourses=allCourses.stream().distinct().toList();
+        organizations=addCoursesToOrganizations(organizations,uniqueCourses);
 
-        return apiOrganizations.stream().distinct().toList();
+        return organizations.stream().distinct().toList();
     }
 
-    public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
+       public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations)
+    {        return apiResponseOrganizations.stream().map(a -> new Organization(
+                idService.generateRandomId(),
+                a.id(),
+                a.name(),
+                a.homepage(),
+                a.email(),
+                a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " "
+                + a.address().addressDetails().city(),
+                new ArrayList<>(), 0.0,new ArrayList<>())).toList();
+    }
 
-        return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.name(),
-                a.homepage(), a.email(),
+    public List<Organization> addCoursesToOrganizations(List<Organization> organizations, List<Course> courses) {
+        List<Organization> updatedOrganizations = new ArrayList<>();
+        for (Organization organization : organizations) {
+            List<Course> updatedCourses = new ArrayList<>(organization.courses());
+            for (Course course : courses) {
+                if (organization.apiId().equals(course.apiOrganizationId())) {
+                    updatedCourses.add(course);
 
-                a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " " + a.address().addressDetails().city(), new ArrayList<>(), 0.0)).toList();
+                }
+            }
+            updatedOrganizations.add(new Organization(
+                    organization.id(),
+                    organization.apiId(),
+                    organization.name(),
+                    organization.homepage(),
+                    organization.email(),
+                    organization.address(),
+                    organization.reviews(),
+                    organization.averageRating(),
+                    updatedCourses
+            ));
+        }
+        return updatedOrganizations;
     }
 
     public String getNextPageUrl(ApiResponse apiResponse) {
-        if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < 10) {
+        if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < apiResponse.page().totalPages()-1) {
             return "?page=" + (apiResponse.page().number() + 1) + "&size=20";
         }
         return null;

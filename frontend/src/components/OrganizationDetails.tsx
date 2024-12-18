@@ -6,6 +6,7 @@ import "../styles/OrganizationDetails.css"
 import StarsRating from "./StarsRating.tsx";
 import {AppUser} from "../types/AppUser.ts";
 
+
 type OrganizationDetailsProps = {
     appUser: AppUser|null|undefined;
     onLogin: (user: AppUser) => void;
@@ -19,6 +20,7 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [deleteSuccess, setDeleteSuccess] = useState(false);
+    const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null);
 
     useEffect(() => {
 
@@ -59,6 +61,11 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
             });
     }
 
+
+    const toggleCourseDetails = (courseId: string) => {
+
+        setExpandedCourseId(prevId => (prevId === courseId ? null : courseId));
+    };
     return (
         <div>
 
@@ -108,20 +115,71 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
             <div className="spacing">
                 <strong>Durchschnitsnote: </strong>
                 {(organization?.averageRating === null || organization?.averageRating === 0.0)
-                ? "noch keine Bewertung"
+                    ? "noch keine Bewertung"
 
-                : (<StarsRating rating={parseFloat(organization?.averageRating.toFixed(1) as string)}/>)}
+                    : (<StarsRating rating={parseFloat(organization?.averageRating.toFixed(1) as string)}/>)}
             </div>
 
-            <div><strong>Rezensionen: </strong> {organization?.reviews && organization.reviews.length > 0
+            <div className="spacing"><strong>Rezensionen: </strong> {organization?.reviews && organization.reviews.length > 0
                 ?
                 (<ul className="review-list">
-                    {organization?.reviews.map((r, index) => (
-                        <li key={index} className="review-item">{r.author}: {r.comment} <br/>
+                    {organization?.reviews.map((r) => (
+                        <li key={r.id} className="review-item">{r.author}: {r.comment} <br/>
                             <StarsRating rating={r.starNumber}/>
                         </li>))}
                 </ul>)
                 : "noch keine Rezensionen vorhanden"}</div>
+            <div className="spacing">
+                <strong> Kurse: </strong>
+                {organization?.courses && organization.courses.length > 0 ? (
+                    <ul className="course-list">
+                        {organization.courses.map((course) => (
+                            <li key={course.id} className="course-item">
+                                <div
+                                    role="button"
+                                    onClick={() => toggleCourseDetails(course.id)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            toggleCourseDetails(course.id);
+                                        }
+                                    }}
+                                    tabIndex={0}
+                                    style={{cursor: 'pointer'}}
+                                >
+                                    {course.courseName}
+                                </div>
+
+                                {expandedCourseId === course.id && (
+                                    <div className="course-details">
+                                        <p className="title-course-details"><strong>Inhalt:</strong></p>
+                                        <div
+                                            dangerouslySetInnerHTML={{__html: course.courseContent}}
+                                            className="course-element"
+                                        />
+                                        <p className="title-course-details"><strong>Abschluss:</strong></p>
+                                        <div
+                                            dangerouslySetInnerHTML={{__html: course.courseDegree}}
+                                            className="course-element"
+                                        />
+                                        <p className="title-course-details">
+                                            <strong>Förderung:</strong></p>
+                                        {course.educationVoucher ? (
+                                                <div
+                                                    dangerouslySetInnerHTML={{__html: course.educationVoucher}}
+                                                    className="course-element"
+                                                />)
+                                            : (<div className="course-element">Keine Informationen</div>)}
+
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    "Keine Kurse vorhanden"
+                )}
+            </div>
         </div>
     );
 }

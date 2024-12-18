@@ -1,4 +1,5 @@
 import {Review} from "./Review.ts";
+import {Course} from "./Course.ts";
 
 export type Organization =
     {
@@ -9,4 +10,5 @@ export type Organization =
         address: string;
         reviews: Review[];
         averageRating: number;
+        courses: Course[]
     }

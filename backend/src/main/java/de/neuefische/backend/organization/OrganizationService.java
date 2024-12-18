@@ -69,8 +69,9 @@ public class OrganizationService {
     }
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {
-        Organization organization = new Organization(idService.generateRandomId(), organizationDTO.name(),
-                organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(), new ArrayList<>(), 0.0);
+        Organization organization = new Organization(idService.generateRandomId(), null, organizationDTO.name(),
+                organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(), new ArrayList<>(),
+                0.0,new ArrayList<>());
         return organizationRepo.save(organization);
     }
 
@@ -78,14 +79,14 @@ public class OrganizationService {
         Organization organization =
                 organizationRepo.findById(id).orElseThrow(() -> new OrganizationNotFoundException(id));
         return new OrganizationDTO(organization.name(), organization.homepage(), organization.email(),
-                organization.address(), organization.reviews(), organization.averageRating());
+                organization.address(), organization.reviews(), organization.averageRating(), organization.courses());
     }
 
     public Organization updateOrganizationFromDTO(String id, OrganizationDTO organizationDTO) {
         if (organizationRepo.existsById(id)) {
-            Organization updatedOrganization = new Organization(id, organizationDTO.name(),
+            Organization updatedOrganization = new Organization(id,null, organizationDTO.name(),
                     organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(),
-                    organizationDTO.reviews(), organizationDTO.averageRating());
+                    organizationDTO.reviews(), organizationDTO.averageRating(),new ArrayList<>());
             return organizationRepo.save(updatedOrganization);
         } else
             throw new OrganizationNotFoundException(id);
@@ -112,5 +113,6 @@ public class OrganizationService {
         organizationRepo.save(actualisedOrganization);
         return actualisedOrganization;
     }
+
 }
 

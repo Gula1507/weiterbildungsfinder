@@ -16,3 +16,30 @@
     margin-bottom: 20px;
 }
 
+
+.course-item {
+    list-style-type: none;
+    text-decoration: underline;
+    cursor: pointer;
+    margin: 10px 0;
+}
+
+.course-item:hover {
+    text-decoration: none;
+}
+
+.course-element {
+    list-style-type: none;
+    color: darkcyan;
+    background-color: white;
+}
+.course-details{
+    background-color: white;
+    border: 1px solid darkcyan;
+
+}
+
+.title-course-details {
+    font-size: larger;
+    text-decoration: underline;
+}

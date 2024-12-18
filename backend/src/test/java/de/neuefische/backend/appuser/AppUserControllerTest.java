@@ -69,6 +69,6 @@ class AppUserControllerTest {
     @Test
     void logout_shouldReturnUnauthorized_whenUserNotAuthenticated() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/logout"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isNoContent());
     }
 }

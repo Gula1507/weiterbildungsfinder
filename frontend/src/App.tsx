@@ -88,7 +88,8 @@ function App() {
                 <Route
                     path="/"
                     element={<Home organizations={organizations} loading={loading} loadOrganizations={loadOrganizations}
-                                   totalPages={totalPages} searchText={searchText} setSearchText={setSearchText}/>}
+                                   totalPages={totalPages} searchText={searchText} setSearchText={setSearchText}
+                    appUser={appUser}/>}
                 />
                 <Route path="/add-organization" element={<OrganizationForm/>}/>
                 <Route path="/edit-organization/:id" element={<OrganizationForm/>}/>

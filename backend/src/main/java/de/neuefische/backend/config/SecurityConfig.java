@@ -18,16 +18,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 String adminRole="ROLE ADMIN";
+
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers(HttpMethod.POST,"/api/organizations").authenticated()
                         .requestMatchers(HttpMethod.PUT,"/api/organizations/*").hasAuthority(adminRole)
                         .requestMatchers(HttpMethod.DELETE,"/api/organizations/*").hasAuthority(adminRole)
                         .requestMatchers(HttpMethod.PUT,"/api/organizations/refresh").hasAuthority(adminRole)
-                        .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/organizations/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.POST,"/api/organizations/{id}/reviews").authenticated()
+                        .anyRequest().permitAll())
                         .httpBasic(httpSecurityHttpBasicConfigurer -> httpSecurityHttpBasicConfigurer
                         .authenticationEntryPoint(((request, response, authException) -> response.sendError(401))));
         return httpSecurity.build();

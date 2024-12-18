@@ -64,7 +64,8 @@ public class ArbeitsagenturApiService {
                 throw new ApiResponseException();
             }
         }
-        organizations=addCoursesToOrganizations(organizations,allCourses);
+        List<Course> uniqueCourses=allCourses.stream().distinct().toList();
+        organizations=addCoursesToOrganizations(organizations,uniqueCourses);
 
         return organizations.stream().distinct().toList();
     }

@@ -68,41 +68,7 @@ public class ArbeitsagenturApiService {
         return organizations.stream().distinct().toList();
     }
 
-    public List<Course> loadCourses(String id) {
-
-       String urlPage = "?page=0&size=20"+"&ban="+id;
-       List <Course> allCourses=new ArrayList<>();
-
-        while (urlPage != null) {
-            try {
-                ApiResponse response =
-                        restClient.get().uri(urlPage).header("X-API-Key", "infosysbub-wbsuche").retrieve().body(ApiResponse.class);
-
-                if (response == null || response.responseContent() == null || response.responseContent().details() == null) {
-                    logger.error("Fehler: responseContent ist null für die Seite {}", urlPage);
-                    break;
-                }
-
-                List<ApiResponseDetails> details = response.responseContent().details();
-                List <Course> courses=new ArrayList<>();
-                for(ApiResponseDetails apiResponseDetails:details) {
-                    courses.add(new Course(apiResponseDetails.courseOffer().courseId(),
-                            apiResponseDetails.courseOffer().courseName(),
-                            apiResponseDetails.courseOffer().courseContent(),
-                            apiResponseDetails.courseOffer().courseDegree(),
-                            apiResponseDetails.courseOffer().educationVoucher(),
-                            new CourseType(apiResponseDetails.courseOffer().courseType().courseTypeName()),
-                            apiResponseDetails.courseOffer().apiResponseOrganization().id()));}
-                allCourses.addAll(courses);
-                urlPage = getNextPageUrl(response, id);
-            } catch (Exception e) {
-                throw new ApiResponseException();
-            }
-        }
-
-        return allCourses;
-    }
-    public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations)
+       public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations)
     {        return apiResponseOrganizations.stream().map(a -> new Organization(
                 idService.generateRandomId(),
                 a.id(),
@@ -124,7 +90,6 @@ public class ArbeitsagenturApiService {
 
                 }
             }
-
             updatedOrganizations.add(new Organization(
                     organization.id(),
                     organization.apiId(),
@@ -140,15 +105,8 @@ public class ArbeitsagenturApiService {
         return updatedOrganizations;
     }
 
-    public String getNextPageUrl(ApiResponse apiResponse,String id) {
-        if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < 2) {
-            return "?page=" + (apiResponse.page().number() + 1) + "&size=20"+"&ban="+id;
-        }
-        return null;
-    }
-
     public String getNextPageUrl(ApiResponse apiResponse) {
-        if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < 2) {
+        if (apiResponse != null && apiResponse.page() != null && apiResponse.page().number() < apiResponse.page().totalPages()-1) {
             return "?page=" + (apiResponse.page().number() + 1) + "&size=20";
         }
         return null;

@@ -1,6 +1,5 @@
 package de.neuefische.backend.organization;
 
-import de.neuefische.backend.organization.model.Course;
 import de.neuefische.backend.organization.model.Organization;
 import de.neuefische.backend.organization.model.OrganizationDTO;
 import de.neuefische.backend.organization.model.ReviewDTO;
@@ -60,8 +59,4 @@ public class OrganizationController {
         return organizationService.addReviewToOrganization(id, reviewDTO);
     }
 
-    @GetMapping("/courses/{id}")
-    public List<Course> getCourses(@PathVariable String id) {
-        return organizationService.getCourses(id);
-    }
 }

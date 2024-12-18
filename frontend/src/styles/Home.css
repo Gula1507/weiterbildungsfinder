@@ -80,3 +80,13 @@ input {
     background-color: #b1afaf;
     transform: scale(1.1);
 }
+
+.da-element {
+    color: red;
+    font-weight: bold;
+}
+
+.kursda-titel{
+    font-size: larger;
+    font-style: italic;
+}

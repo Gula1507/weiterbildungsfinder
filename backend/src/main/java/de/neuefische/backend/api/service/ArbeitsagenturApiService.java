@@ -28,9 +28,10 @@ public class ArbeitsagenturApiService {
     }
 
     public List<Organization> loadAllOrganizations() {
-        List<Organization> apiOrganizations = new ArrayList<>();
-        String urlPage = "?page=0&size=20";
+        List<Organization> organizations = new ArrayList<>();
+        List <Course> allCourses=new ArrayList<>();
 
+        String urlPage = "?page=0&size=20";
         while (urlPage != null) {
             try {
                 ApiResponse response =
@@ -42,18 +43,29 @@ public class ArbeitsagenturApiService {
                 }
 
                 List<ApiResponseDetails> details = response.responseContent().details();
-
+                List <Course> courses=new ArrayList<>();
                 List<ApiResponseOrganization> apiResponseOrganizations =
                         details.stream().map(ApiResponseDetails::courseOffer).map(ApiResponseCourseOffer::apiResponseOrganization).distinct().toList();
 
-                apiOrganizations.addAll(convertApiOrganizationsToOrganizations(apiResponseOrganizations));
+                for(ApiResponseDetails apiResponseDetails:details) {
+                    courses.add(new Course(apiResponseDetails.courseOffer().courseId(),
+                            apiResponseDetails.courseOffer().courseName(),
+                            apiResponseDetails.courseOffer().courseContent(),
+                            apiResponseDetails.courseOffer().courseDegree(),
+                            apiResponseDetails.courseOffer().educationVoucher(),
+                            new CourseType(apiResponseDetails.courseOffer().courseType().courseTypeName()),
+                            apiResponseDetails.courseOffer().apiResponseOrganization().id()));}
+                allCourses.addAll(courses);
+                organizations.addAll(convertApiOrganizationsToOrganizations(apiResponseOrganizations));
+
                 urlPage = getNextPageUrl(response);
             } catch (Exception e) {
                 throw new ApiResponseException();
             }
         }
+        organizations=addCoursesToOrganizations(organizations,allCourses);
 
-        return apiOrganizations.stream().distinct().toList();
+        return organizations.stream().distinct().toList();
     }
 
     public List<Course> loadCourses(String id) {
@@ -81,10 +93,6 @@ public class ArbeitsagenturApiService {
                             apiResponseDetails.courseOffer().educationVoucher(),
                             new CourseType(apiResponseDetails.courseOffer().courseType().courseTypeName()),
                             apiResponseDetails.courseOffer().apiResponseOrganization().id()));}
-
-
-
-
                 allCourses.addAll(courses);
                 urlPage = getNextPageUrl(response, id);
             } catch (Exception e) {
@@ -94,14 +102,42 @@ public class ArbeitsagenturApiService {
 
         return allCourses;
     }
-    public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations) {
-
-        return apiResponseOrganizations.stream().map(a -> new Organization(idService.generateRandomId(), a.id(),
+    public List<Organization> convertApiOrganizationsToOrganizations(List<ApiResponseOrganization> apiResponseOrganizations)
+    {        return apiResponseOrganizations.stream().map(a -> new Organization(
+                idService.generateRandomId(),
+                a.id(),
                 a.name(),
-                a.homepage(), a.email(),
+                a.homepage(),
+                a.email(),
                 a.address().streetAndHomeNumber() + ", " + a.address().addressDetails().postalCode() + " "
-                + a.address().addressDetails().city(), new ArrayList<>(),
-                0.0)).toList();
+                + a.address().addressDetails().city(),
+                new ArrayList<>(), 0.0,new ArrayList<>())).toList();
+    }
+
+    public List<Organization> addCoursesToOrganizations(List<Organization> organizations, List<Course> courses) {
+        List<Organization> updatedOrganizations = new ArrayList<>();
+        for (Organization organization : organizations) {
+            List<Course> updatedCourses = new ArrayList<>(organization.courses());
+            for (Course course : courses) {
+                if (organization.apiId().equals(course.apiOrganizationId())) {
+                    updatedCourses.add(course);
+
+                }
+            }
+
+            updatedOrganizations.add(new Organization(
+                    organization.id(),
+                    organization.apiId(),
+                    organization.name(),
+                    organization.homepage(),
+                    organization.email(),
+                    organization.address(),
+                    organization.reviews(),
+                    organization.averageRating(),
+                    updatedCourses
+            ));
+        }
+        return updatedOrganizations;
     }
 
     public String getNextPageUrl(ApiResponse apiResponse,String id) {

@@ -37,8 +37,8 @@ class OrganizationServiceTest {
 
     @BeforeEach
     void setUp() {
-        testOrganization = new Organization("1", "testname", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0);
+        testOrganization = new Organization("1", 100L,"testname", "testhomepage", "testemail", "testaddress",
+                new ArrayList<>(), 0.0,new ArrayList<>());
     }
 
 
@@ -57,12 +57,12 @@ class OrganizationServiceTest {
 
     @Test
     void getAllOrganizations_ShouldReturnAllOrganizations() {
-        Organization testOrganizationA = new Organization("1", "A-name", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0);
-        Organization testOrganizationSmallA = new Organization("1", "a-name", "testhomepage", "testemail",
-                "testaddress", new ArrayList<>(), 0.0);
-        Organization testOrganizationB = new Organization("1", "B-name", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0);
+        Organization testOrganizationA = new Organization("1",10L, "A-name", "testhomepage", "testemail", "testaddress",
+                new ArrayList<>(), 0.0,new ArrayList<>());
+        Organization testOrganizationSmallA = new Organization("1", 102L,"a-name", "testhomepage", "testemail",
+                "testaddress", new ArrayList<>(), 0.0,new ArrayList<>());
+        Organization testOrganizationB = new Organization("1", 102L,"B-name", "testhomepage", "testemail", "testaddress",
+                new ArrayList<>(), 0.0,new ArrayList<>());
 
         List<Organization> sortedOrganizations = List.of(testOrganizationA, testOrganizationSmallA, testOrganizationB);
 
@@ -146,8 +146,8 @@ class OrganizationServiceTest {
         OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name", "Updated Homepage", "updated@email.com"
                 , "Updated Address", new ArrayList<>(), 0.0);
         String id = "1";
-        Organization expectedOrganization = new Organization(id, "Updated Name", "Updated Homepage",
-                "updated@email" + ".com", "Updated" + " Address", new ArrayList<>(), 0.0);
+        Organization expectedOrganization = new Organization(id, 100L,"Updated Name", "Updated Homepage",
+                "updated@email" + ".com", "Updated" + " Address", new ArrayList<>(), 0.0,new ArrayList<>());
         when(mockedOrganisationRepo.existsById(id)).thenReturn(true);
         when(mockedOrganisationRepo.save(any(Organization.class))).thenReturn(expectedOrganization);
 

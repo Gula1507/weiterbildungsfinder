@@ -62,12 +62,13 @@ class ArbeitsagenturApiServiceTest {
     void getNextPageUrl_returnsCorrectUrl_whenPageNumberIsLessThan10() {
 
         ApiResponsePage page = mock(ApiResponsePage.class);
-        when(page.number()).thenReturn(5);
+        when(page.number()).thenReturn(1);
         ApiResponse apiResponse = mock(ApiResponse.class);
         when(apiResponse.page()).thenReturn(page);
+        when(apiResponse.page().totalPages()).thenReturn(10);
 
         String nextPageUrl = apiService.getNextPageUrl(apiResponse);
-        assertEquals("?page=6&size=20", nextPageUrl);
+        assertEquals("?page=2&size=20", nextPageUrl);
     }
 
     @Test

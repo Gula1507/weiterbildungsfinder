@@ -42,8 +42,8 @@ class OrganizationControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         organizationRepository.deleteAll();
-        testOrganization = new Organization("1", "testname", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0);
+        testOrganization = new Organization("1", 100L,"testname", "testhomepage", "testemail", "testaddress",
+                new ArrayList<>(), 0.0,new ArrayList<>());
     }
 
     @Test

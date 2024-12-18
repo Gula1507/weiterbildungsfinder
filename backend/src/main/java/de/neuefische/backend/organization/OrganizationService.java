@@ -67,7 +67,8 @@ public class OrganizationService {
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {
         Organization organization = new Organization(idService.generateRandomId(), null, organizationDTO.name(),
-                organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(), new ArrayList<>(), 0.0);
+                organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(), new ArrayList<>(),
+                0.0,new ArrayList<>());
         return organizationRepo.save(organization);
     }
 
@@ -82,7 +83,7 @@ public class OrganizationService {
         if (organizationRepo.existsById(id)) {
             Organization updatedOrganization = new Organization(id,null, organizationDTO.name(),
                     organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(),
-                    organizationDTO.reviews(), organizationDTO.averageRating());
+                    organizationDTO.reviews(), organizationDTO.averageRating(),new ArrayList<>());
             return organizationRepo.save(updatedOrganization);
         } else
             throw new OrganizationNotFoundException(id);

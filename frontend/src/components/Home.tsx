@@ -3,6 +3,7 @@ import OrganizationGallery from "./OrganizationGallery.tsx";
 import "../styles/Home.css"
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
+import {AppUser} from "../types/AppUser.ts";
 
 type HomeProps = {
     organizations: Organization[];
@@ -11,6 +12,7 @@ type HomeProps = {
     totalPages: number;
     searchText: string;
     setSearchText: (text: string) => void;
+    appUser: AppUser|null|undefined;
 
 };
 
@@ -20,10 +22,6 @@ function Home(props: HomeProps) {
     const [page, setPage] = useState<number>(0);
     const [size] = useState<number>(10);
     const [localSearchText, setLocalSearchText] = useState<string>(props.searchText);
-    const handleAddOrganization = () => {
-        navigate("add-organization");
-    };
-
 
     const handleSearchSubmit = () => {
         props.loadOrganizations(0, size, localSearchText);
@@ -81,17 +79,29 @@ function Home(props: HomeProps) {
                             "Keine Weiterbildungsanbieter gefunden"
                         )}
 
-                        <button className="add" onClick={handleAddOrganization}>
-                            + NEU
-                        </button>
-                    </>
-                )}
+                            <button
+                                className="add"
+                                onClick={() => {
+                                    if (!props.appUser) {
 
-                <div className="pagination">
-                    <button onClick={() => handlePageChange(0)} disabled={page <= 0}>⏮️</button>
-                    <button onClick={() => handlePageChange(page - 1)} disabled={page <= 0}>🢦</button>
-                    <span>Seite {page + 1} von {props.totalPages}</span>
-                    <button onClick={() => handlePageChange(page + 1)} disabled={page >= props.totalPages - 1}>
+                                        navigate('/login', {state: {from: `/add-organization`}});
+
+                                    } else {
+
+                                        navigate(`/add-organization`);
+                                    }
+                                }}
+                            >
+                                + NEU
+                            </button>
+                        </>
+                        )}
+
+                        <div className="pagination">
+                            <button onClick={() => handlePageChange(0)} disabled={page <= 0}>⏮️</button>
+                            <button onClick={() => handlePageChange(page - 1)} disabled={page <= 0}>🢦</button>
+                            <span>Seite {page + 1} von {props.totalPages}</span>
+                            <button onClick={() => handlePageChange(page + 1)} disabled={page >= props.totalPages - 1}>
                         🢧
                     </button>
                     <button onClick={() => handlePageChange(props.totalPages - 1)}

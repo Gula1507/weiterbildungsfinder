@@ -133,8 +133,8 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
                 <strong> Kurse: </strong>
                 {organization?.courses && organization.courses.length > 0 ? (
                     <ul className="course-list">
-                        {organization.courses.map((course) => (
-                            <li key={course.courseId} className="course-item">
+                        {organization.courses.map((course,index) => (
+                            <li key={index} className="course-item">
                                 <div onClick={() => toggleCourseDetails(course.courseId)} style={{ cursor: 'pointer' }}>
                                     <strong>{course.courseName}</strong>
                                 </div>

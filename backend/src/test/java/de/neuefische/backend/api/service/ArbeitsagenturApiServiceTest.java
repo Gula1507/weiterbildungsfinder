@@ -93,7 +93,7 @@ class ArbeitsagenturApiServiceTest {
                 "testadress2", new ArrayList<>(), 0.00, new ArrayList<>());
         List<Organization> organizationsWithoutCourses = new ArrayList<>(List.of(organization1, organization2));
 
-        List<Course> courses = new ArrayList<>(List.of(new Course(10L, "course1",
+        List<Course> courses = new ArrayList<>(List.of(new Course("1",10L, "course1",
                 "content1", "certificate1", "yes",
                 new CourseType("weiterbildung"), 10L)));
 

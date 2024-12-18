@@ -20,7 +20,7 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [deleteSuccess, setDeleteSuccess] = useState(false);
-    const [expandedCourseId, setExpandedCourseId] = useState<number | null>(null);
+    const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null);
 
     useEffect(() => {
 
@@ -62,8 +62,8 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
     }
 
 
-    const toggleCourseDetails = (courseId: number) => {
-        // Toggle der Anzeige der Kursdetails
+    const toggleCourseDetails = (courseId: string) => {
+
         setExpandedCourseId(prevId => (prevId === courseId ? null : courseId));
     };
     return (
@@ -133,13 +133,13 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
                 <strong> Kurse: </strong>
                 {organization?.courses && organization.courses.length > 0 ? (
                     <ul className="course-list">
-                        {organization.courses.map((course,index) => (
-                            <li key={index} className="course-item">
-                                <div onClick={() => toggleCourseDetails(course.courseId)} style={{ cursor: 'pointer' }}>
+                        {organization.courses.map((course) => (
+                            <li key={course.id} className="course-item">
+                                <div onClick={() => toggleCourseDetails(course.id)} style={{ cursor: 'pointer' }}>
                                     <strong>{course.courseName}</strong>
                                 </div>
 
-                                {expandedCourseId === course.courseId && (
+                                {expandedCourseId === course.id && (
                                     <div className="course-details">
                                         <p className="title-course-details"><strong>Inhalt:</strong></p>
                                         <div

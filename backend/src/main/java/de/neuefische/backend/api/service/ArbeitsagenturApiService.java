@@ -48,7 +48,8 @@ public class ArbeitsagenturApiService {
                         details.stream().map(ApiResponseDetails::courseOffer).map(ApiResponseCourseOffer::apiResponseOrganization).distinct().toList();
 
                 for(ApiResponseDetails apiResponseDetails:details) {
-                    courses.add(new Course(apiResponseDetails.courseOffer().courseId(),
+                    courses.add(new Course(idService.generateRandomId(),
+                            apiResponseDetails.courseOffer().courseId(),
                             apiResponseDetails.courseOffer().courseName(),
                             apiResponseDetails.courseOffer().courseContent(),
                             apiResponseDetails.courseOffer().courseDegree(),

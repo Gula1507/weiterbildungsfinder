@@ -1,7 +1,8 @@
 import {CourseType} from "./CourseType.ts";
 
 export type Course= {
-    courseId: number,
+    id:string,
+    apiCourseId: number,
     courseName:string,
     courseContent:string,
     courseDegree:string,

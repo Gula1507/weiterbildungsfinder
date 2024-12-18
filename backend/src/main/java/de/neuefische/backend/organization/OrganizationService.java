@@ -76,7 +76,7 @@ public class OrganizationService {
         Organization organization =
                 organizationRepo.findById(id).orElseThrow(() -> new OrganizationNotFoundException(id));
         return new OrganizationDTO(organization.name(), organization.homepage(), organization.email(),
-                organization.address(), organization.reviews(), organization.averageRating());
+                organization.address(), organization.reviews(), organization.averageRating(), organization.courses());
     }
 
     public Organization updateOrganizationFromDTO(String id, OrganizationDTO organizationDTO) {

@@ -109,7 +109,7 @@ class OrganizationServiceTest {
     @Test
     void saveOrganizationFromDTO_shouldReturnOrganizationWithGeneratedId() {
         OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0);
+                new ArrayList<>(), 0.0,new ArrayList<>());
         when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
         when(mockedIdService.generateRandomId()).thenReturn("1");
         when(mockedOrganisationRepo.existsByName("testname2")).thenReturn(false);
@@ -144,7 +144,7 @@ class OrganizationServiceTest {
     @Test
     void updateOrganizationFromDTO_shouldReturnUpdatedOrganization_whenOrganizationExists() {
         OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name", "Updated Homepage", "updated@email.com"
-                , "Updated Address", new ArrayList<>(), 0.0);
+                , "Updated Address", new ArrayList<>(), 0.0,new ArrayList<>());
         String id = "1";
         Organization expectedOrganization = new Organization(id, 100L,"Updated Name", "Updated Homepage",
                 "updated@email" + ".com", "Updated" + " Address", new ArrayList<>(), 0.0,new ArrayList<>());
@@ -161,7 +161,7 @@ class OrganizationServiceTest {
     @Test
     void updateOrganizationFromDTO_shouldThrowException_whenOrganizationNotExist() {
         OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name", "Updated Homepage", "updated@email.com"
-                , "Updated Address", new ArrayList<>(), 0.0);
+                , "Updated Address", new ArrayList<>(), 0.0,new ArrayList<>());
         String id = "999";
         when(mockedOrganisationRepo.existsById(id)).thenReturn(false);
 

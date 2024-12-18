@@ -158,7 +158,7 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
                                             dangerouslySetInnerHTML={{__html: course.educationVoucher}}
                                             className="course-element"
                                         />)
-                                           : "Keine Informationen"}
+                                            : (<div className="course-element">Keine Informationen</div>)}
 
                                     </div>
                                 )}

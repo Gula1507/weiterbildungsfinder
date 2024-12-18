@@ -123,8 +123,8 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
             <div className="spacing"><strong>Rezensionen: </strong> {organization?.reviews && organization.reviews.length > 0
                 ?
                 (<ul className="review-list">
-                    {organization?.reviews.map((r, index) => (
-                        <li key={index} className="review-item">{r.author}: {r.comment} <br/>
+                    {organization?.reviews.map((r) => (
+                        <li key={r.id} className="review-item">{r.author}: {r.comment} <br/>
                             <StarsRating rating={r.starNumber}/>
                         </li>))}
                 </ul>)
@@ -135,8 +135,19 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
                     <ul className="course-list">
                         {organization.courses.map((course) => (
                             <li key={course.id} className="course-item">
-                                <div onClick={() => toggleCourseDetails(course.id)} style={{ cursor: 'pointer' }}>
-                                    <strong>{course.courseName}</strong>
+                                <div
+                                    role="button"
+                                    onClick={() => toggleCourseDetails(course.id)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            toggleCourseDetails(course.id);
+                                        }
+                                    }}
+                                    tabIndex={0}
+                                    style={{cursor: 'pointer'}}
+                                >
+                                    {course.courseName}
                                 </div>
 
                                 {expandedCourseId === course.id && (
@@ -153,11 +164,11 @@ function OrganizationDetails(props:OrganizationDetailsProps) {
                                         />
                                         <p className="title-course-details">
                                             <strong>Förderung:</strong></p>
-                                        {course.educationVoucher ?(
-                                        <div
-                                            dangerouslySetInnerHTML={{__html: course.educationVoucher}}
-                                            className="course-element"
-                                        />)
+                                        {course.educationVoucher ? (
+                                                <div
+                                                    dangerouslySetInnerHTML={{__html: course.educationVoucher}}
+                                                    className="course-element"
+                                                />)
                                             : (<div className="course-element">Keine Informationen</div>)}
 
                                     </div>

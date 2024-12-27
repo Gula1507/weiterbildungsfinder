@@ -1,50 +1,108 @@
-# React + TypeScript + Vite
+# Weiterbildungsfinder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dieses Repository enthält ein Projekt für ein Vergleichsportal von Weiterbildungsanbietern.
 
-Currently, two official plugins are available:
+## Beschreibung
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Das Hauptziel des Projekts ist es, den Nutzern die Suche nach einem Weiterbildungsanbieter zu erleichtern, Bewertungen für Kursanbieter zu ermöglichen und alle existierenden Weiterbildungsanbieter in Deutschland aufzulisten.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Die Anwendung bietet folgende Möglichkeiten:
+- **Benutzerregistrierung und -anmeldung** mit Spring Security
+- **CRUD-Operationen** für Weiterbildungsanbieter
+- **Integration mit externen APIs**, um zusätzliche Daten zu Kursanbietern abzurufen
+- Auflistung von über **200 Weiterbildungsanbietern**
+- **Suchfunktion** nach Name des Kursanbieters
+- Möglichkeit, eine **Rezension zu hinterlassen**, inklusive Sternebewertung und Kommentar
+- Moderne **Benutzeroberfläche mit React**, inklusive eines responsiven Designs
 
-- Configure the top-level `parserOptions` property like this:
+## Technologie-Stack
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Backend
+- Java (Spring Boot, Spring Security)
+- MongoDB mit MongoRepository
+- Docker für Containerisierung
+- RESTful APIs
+
+### Frontend
+- React
+- TypeScript
+- Axios für API-Aufrufe
+- HTML/CSS3
+
+### Testing
+- JUnit 5
+- Mockito
+- **Flapdoodle** für eingebettete MongoDB in Tests
+
+### Weitere Technologien
+- SonarCloud
+
+## Deployment
+
+Das Projekt ist unter folgender URL verfügbar: [https://kursda.onrender.com/](https://kursda.onrender.com/).
+
+**Hinweis:** Die Seite könnte etwas länger zum Laden brauchen. Bitte haben Sie Geduld.
+
+## Projekt-Setup
+
+### Voraussetzungen
+Stelle sicher, dass du folgende Software installiert hast:
+- **Java 17+** für das Backend
+- **Node.js 16+** für das Frontend
+- **Docker** und **Docker Compose**
+- **MongoDB** (lokal oder als Cloud-Dienst, z.B. Render)
+
+## Installation
+
+### 1. Klone das Repository
+```bash
+git clone https://github.com/Gula1507/weiterbildungsfinder.git
+cd weiterbildungsfinder
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 2. Backend starten
+Navigiere ins Backend-Verzeichnis und starte die Spring Boot-Anwendung:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+cd backend
+./mvnw spring-boot:run
 ```
+
+### 3. Frontend starten
+Navigiere ins Frontend-Verzeichnis, installiere die Abhängigkeiten und starte die Anwendung:
+
+```bash
+cd frontend
+npm install
+npm start
+```
+### Konfiguration
+Um Umgebungsvariablen zu setzen, erstelle eine .env-Datei im Verzeichnis backend und füge folgende Werte hinzu:
+
+```bash
+SPRING_MONGODB_URI=mongodb://localhost:27017/deine-datenbank
+```
+
+
+
+### Screenshots
+Screenshot der Startseite:
+
+
+
+![Dashboard screenshot](public/images/screenshot2.png)
+
+Screenshot der Detailseite für Kursanbieter:
+![Course provider screenshot](public/images/screenshot1.png)
+
+### Geplante Verbesserungen
+- Erweiterung der Filter- und Suchfunktion für Kursanbieter
+- Erweiterte Login/Logout-Funktionalität
+- CRUD-Operationen für Kurse
+- Einloggen mit LinkedIn
+
+### Lizenz
+
+Dieses Projekt steht unter der MIT-Lizenz. Siehe die LICENSE-Datei für Details.

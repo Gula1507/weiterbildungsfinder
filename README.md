@@ -105,4 +105,4 @@ Screenshot der Detailseite für Kursanbieter:
 
 ### Lizenz
 
-Dieses Projekt steht unter der MIT-Lizenz. Siehe die LICENSE-Datei für Details.
+Dieses Projekt steht unter der MIT-Lizenz mit einer Klausel für nicht-kommerzielle Nutzung. Siehe [LICENSE-Datei](./LICENSE) für Details.

@@ -92,10 +92,10 @@ Screenshot der Startseite:
 
 
 
-![Dashboard screenshot](public/images/screenshot2.png)
+![Dashboard screenshot](frontend/public/images/screenshot2.png)
 
 Screenshot der Detailseite für Kursanbieter:
-![Course provider screenshot](public/images/screenshot1.png)
+![Course provider screenshot](frontend/public/images/screenshot1.png)
 
 ### Geplante Verbesserungen
 - Erweiterung der Filter- und Suchfunktion für Kursanbieter

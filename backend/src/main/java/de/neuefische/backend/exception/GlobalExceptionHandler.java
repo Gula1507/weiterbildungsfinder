@@ -3,6 +3,7 @@ package de.neuefische.backend.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,6 +21,14 @@ public class GlobalExceptionHandler {
     public ErrorMessage handleException(Exception exception) {
         logger.error(UNEXPECTED_ERROR_MESSAGE, exception);
         return new ErrorMessage("An unexpected error occurred: " + exception.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        logger.warn("Invalid request body:{}", exception.getMessage(), exception);
+
+        return new ErrorMessage("Invalid request body. Please ensure the request contains valid JSON.");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

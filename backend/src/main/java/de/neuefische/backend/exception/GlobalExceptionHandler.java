@@ -16,6 +16,7 @@ import java.util.List;
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred";
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage handleException(Exception exception) {
@@ -34,12 +35,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage handleValidationExceptions(MethodArgumentNotValidException exception) {
-        logger.error(UNEXPECTED_ERROR_MESSAGE, exception);
+        logger.warn(UNEXPECTED_ERROR_MESSAGE, exception);
         List<String> errorMessages = exception.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
-                .toList();
+                                              .getFieldErrors()
+                                              .stream()
+                                              .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                                              .toList();
 
         String errorMessage = String.join(", ", errorMessages);
 
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OrganizationNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage handleOrganizationNotFoundException(OrganizationNotFoundException exception) {
-        logger.error(UNEXPECTED_ERROR_MESSAGE, exception);
+        logger.warn(UNEXPECTED_ERROR_MESSAGE, exception);
         return new ErrorMessage(exception.getMessage());
     }
 

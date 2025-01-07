@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -25,5 +26,14 @@ class GlobalExceptionHandlerIntegrationTest {
         mockMvc.perform(get("/api/organizationsss"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(errorMessage1.message()));
+    }
+
+    @Test
+    @WithMockUser(username="testuser", roles="USER")
+    void handleHttpMessageNotReadableException_shouldReturnInvalidRequestBody_whenBodyMissing() throws Exception {
+        ErrorMessage errorMessage=new ErrorMessage("Invalid request body. Please ensure the request contains valid JSON.");
+        mockMvc.perform(post("/api/organizations"))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(errorMessage.message()));
     }
 }

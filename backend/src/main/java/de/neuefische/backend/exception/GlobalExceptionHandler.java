@@ -15,13 +15,14 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-    private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred";
+    private static final String UNEXPECTED_ERROR_MESSAGE = "An unexpected error occurred. ";
+    private static final String SUPPORT_MESSAGE = "Please contact support if the problem persists.";
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage handleException(Exception exception) {
-        logger.error(UNEXPECTED_ERROR_MESSAGE, exception);
-        return new ErrorMessage("An unexpected error occurred: " + exception.getMessage());
+        logger.error(UNEXPECTED_ERROR_MESSAGE+"{}", exception.getMessage(), exception);
+        return new ErrorMessage(UNEXPECTED_ERROR_MESSAGE + SUPPORT_MESSAGE);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

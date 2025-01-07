@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
@@ -53,6 +54,13 @@ public class GlobalExceptionHandler {
     public ErrorMessage handleOrganizationNotFoundException(OrganizationNotFoundException exception) {
         logger.warn(UNEXPECTED_ERROR_MESSAGE, exception);
         return new ErrorMessage(exception.getMessage());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage handleException(NoResourceFoundException exception) {
+        logger.warn(UNEXPECTED_ERROR_MESSAGE + "{}", exception.getMessage(), exception);
+        return new ErrorMessage("The page '"+exception.getResourcePath()+"' doesn't exist");
     }
 
 }

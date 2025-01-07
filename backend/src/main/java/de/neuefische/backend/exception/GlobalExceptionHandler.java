@@ -12,7 +12,6 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
@@ -22,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage handleException(Exception exception) {
-        logger.error(UNEXPECTED_ERROR_MESSAGE+"{}", exception.getMessage(), exception);
+        logger.error(UNEXPECTED_ERROR_MESSAGE + "{}", exception.getMessage(), exception);
         return new ErrorMessage(UNEXPECTED_ERROR_MESSAGE + SUPPORT_MESSAGE);
     }
 
@@ -30,7 +29,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         logger.warn("Invalid request body:{}", exception.getMessage(), exception);
-
         return new ErrorMessage("Invalid request body. Please ensure the request contains valid JSON.");
     }
 
@@ -41,11 +39,10 @@ public class GlobalExceptionHandler {
         List<String> errorMessages = exception.getBindingResult()
                                               .getFieldErrors()
                                               .stream()
-                                              .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                                              .map(fieldError -> fieldError.getField() + ": "
+                                                                 + fieldError.getDefaultMessage())
                                               .toList();
-
         String errorMessage = String.join(", ", errorMessages);
-
         return new ErrorMessage("Validation failed: " + errorMessage);
     }
 
@@ -60,7 +57,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage handleException(NoResourceFoundException exception) {
         logger.warn(UNEXPECTED_ERROR_MESSAGE + "{}", exception.getMessage(), exception);
-        return new ErrorMessage("The page '"+exception.getResourcePath()+"' doesn't exist");
+        return new ErrorMessage("The page '" + exception.getResourcePath() + "' doesn't exist");
     }
-
 }

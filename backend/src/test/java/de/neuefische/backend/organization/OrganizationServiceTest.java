@@ -82,25 +82,25 @@ class OrganizationServiceTest {
     void refreshOrganizationsFromApi_shouldSaveOrganizationFromApi_ifApiOrganizationNotExistInRepo() {
         List<Organization> expected = new ArrayList<>(List.of(testOrganization));
         when(mockedApiService.loadAllOrganizations()).thenReturn(expected);
-        when(mockedOrganisationRepo.existsByName(testOrganization.name())).thenReturn(false);
+        when(mockedOrganisationRepo.existsByApiId(testOrganization.apiId())).thenReturn(false);
         when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
 
         List<Organization> actual = organizationService.refreshOrganizationsFromApi();
 
         verify(mockedOrganisationRepo).save(testOrganization);
-        verify(mockedOrganisationRepo).existsByName(testOrganization.name());
+        verify(mockedOrganisationRepo).existsByApiId(testOrganization.apiId());
         assertEquals(expected, actual);
     }
 
     @Test
-    void saveApiOrganizations_shouldNotSaveOrganizationIfItAlreadyExistsInRepo() {
+    void refreshOrganizationsFromApi_shouldNotSaveOrganizationIfItAlreadyExistsInRepo() {
         List<Organization> expected = new ArrayList<>(List.of(testOrganization));
         when(mockedApiService.loadAllOrganizations()).thenReturn(expected);
-        when(mockedOrganisationRepo.existsByName(testOrganization.name())).thenReturn(true);
+        when(mockedOrganisationRepo.existsByApiId(testOrganization.apiId())).thenReturn(true);
 
         List<Organization> actual = organizationService.refreshOrganizationsFromApi();
 
-        verify(mockedOrganisationRepo).existsByName(testOrganization.name());
+        verify(mockedOrganisationRepo).existsByApiId(testOrganization.apiId());
         verify(mockedOrganisationRepo, times(0)).save(testOrganization);
         Assertions.assertTrue(actual.isEmpty());
 
@@ -108,8 +108,8 @@ class OrganizationServiceTest {
 
     @Test
     void saveOrganizationFromDTO_shouldReturnOrganizationWithGeneratedId() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0,new ArrayList<>());
+        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage",
+                "testemail", "testaddress", new ArrayList<>(), 0.0,new ArrayList<>());
         when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
         when(mockedIdService.generateRandomId()).thenReturn("1");
         when(mockedOrganisationRepo.existsByName("testname2")).thenReturn(false);

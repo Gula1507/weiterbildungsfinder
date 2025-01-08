@@ -53,7 +53,7 @@ public class OrganizationService {
         List<Organization> apiOrganizations = apiService.loadAllOrganizations();
         List<Organization> savedApiOrganizations = new ArrayList<>();
         for (Organization apiOrganization : apiOrganizations) {
-            if (!organizationRepo.existsByName(apiOrganization.name())) {
+            if (!organizationRepo.existsByApiId(apiOrganization.apiId())) {
                 organizationRepo.save(apiOrganization);
                 savedApiOrganizations.add(apiOrganization);
             }

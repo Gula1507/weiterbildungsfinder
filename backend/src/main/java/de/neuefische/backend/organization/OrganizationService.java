@@ -80,11 +80,10 @@ public class OrganizationService {
     }
 
     public Organization updateOrganizationFromDTO(String id, OrganizationDTO organizationDTO) {
-        if (organizationRepo.existsById(id)) {
-            Organization updatedOrganization = new Organization(id, organizationDTO);
-            return organizationRepo.save(updatedOrganization);
-        } else
+        if (!organizationRepo.existsById(id)) {
             throw new OrganizationNotFoundException(id);
+        }
+        return organizationRepo.save(new Organization(id, organizationDTO));
     }
 
     public void deleteOrganizationById(String id) {

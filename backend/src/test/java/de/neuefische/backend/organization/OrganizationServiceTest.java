@@ -123,9 +123,9 @@ class OrganizationServiceTest {
     }
 
     @Test
-    void getOrganizationDTObyId_shouldReturnOrganizationDTO() {
+    void getOrganizationById_returnsCorrectOrganization() {
         when(mockedOrganisationRepo.findById("1")).thenReturn(Optional.of(testOrganization));
-        OrganizationDTO result = organizationService.getOrganizationDTObyId("1");
+        Organization result = organizationService.getOrganizationById("1");
         assertNotNull(result);
         verify(mockedOrganisationRepo).findById("1");
         assertEquals("testname", result.name());
@@ -138,7 +138,7 @@ class OrganizationServiceTest {
     void getOrganizationById_shouldThrowOrganizationNotFoundException() {
         when(mockedOrganisationRepo.findById("nonexistentId")).thenReturn(Optional.empty());
         Assertions.assertThrows(OrganizationNotFoundException.class,
-                () -> organizationService.getOrganizationDTObyId("nonexistentId"));
+                () -> organizationService.getOrganizationById("nonexistentId"));
     }
 
     @Test

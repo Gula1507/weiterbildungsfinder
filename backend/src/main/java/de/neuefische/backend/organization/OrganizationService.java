@@ -72,11 +72,8 @@ public class OrganizationService {
         return organizationRepo.save(organization);
     }
 
-    public OrganizationDTO getOrganizationDTObyId(String id) {
-        Organization organization = organizationRepo.findById(id)
-                                                    .orElseThrow(() -> new OrganizationNotFoundException(id));
-        return new OrganizationDTO(organization.name(), organization.homepage(), organization.email(),
-                organization.address(), organization.reviews(), organization.averageRating(), organization.courses());
+    public Organization getOrganizationById(String id) {
+        return organizationRepo.findById(id).orElseThrow(() -> new OrganizationNotFoundException(id));
     }
 
     public Organization updateOrganizationFromDTO(String id, OrganizationDTO organizationDTO) {

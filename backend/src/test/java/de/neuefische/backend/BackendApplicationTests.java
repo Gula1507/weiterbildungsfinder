@@ -8,6 +8,11 @@ class BackendApplicationTests {
 
 	@Test
 	void contextLoads() {
+		/*
+		 * This method is intentionally empty.
+		 * It is used to check if the Spring ApplicationContext loads successfully.
+		 * No additional implementation is needed.
+		 */
 	}
 
 }

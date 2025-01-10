@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface OrganizationRepository extends MongoRepository<Organization, String> {
 
     boolean existsByName(String name);
+    boolean existsByApiId(Long apiId);
 }

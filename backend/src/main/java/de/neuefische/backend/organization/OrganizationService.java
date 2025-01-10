@@ -35,19 +35,17 @@ public class OrganizationService {
 
 
     public Page<Organization> getAllOrganizations(int page, int size, String search) {
-        Pageable pageable;
-        pageable = PageRequest.of(page, size);
-        Query query = new Query().with(Sort.by(new Sort.Order(Sort.Direction.ASC, "name"))).with(pageable);
-
-        if (search != null && !search.isEmpty()) {
-
+        Pageable pageable = PageRequest.of(page, size);
+        Query query = new Query().with(Sort.by(new Sort.Order(Sort.Direction.ASC, "name")))
+                                 .with(pageable);
+        if (!search.isEmpty()) {
             String sanitizedSearch = Pattern.quote(search);
-            query.addCriteria(Criteria.where("name").regex(sanitizedSearch, "i"));
+            query.addCriteria(Criteria.where("name")
+                                      .regex(sanitizedSearch, "i"));
         }
-
-        query.collation(Collation.of("en").strength(Collation.ComparisonLevel.secondary()));
+        query.collation(Collation.of("en")
+                                 .strength(Collation.ComparisonLevel.secondary()));
         List<Organization> sortedOrganizations = mongoTemplate.find(query, Organization.class);
-
         return PageableExecutionUtils.getPage(sortedOrganizations, pageable, organizationRepo::count);
     }
 
@@ -55,7 +53,7 @@ public class OrganizationService {
         List<Organization> apiOrganizations = apiService.loadAllOrganizations();
         List<Organization> savedApiOrganizations = new ArrayList<>();
         for (Organization apiOrganization : apiOrganizations) {
-            if (!organizationRepo.existsByName(apiOrganization.name())) {
+            if (!organizationRepo.existsByApiId(apiOrganization.apiId())) {
                 organizationRepo.save(apiOrganization);
                 savedApiOrganizations.add(apiOrganization);
             }
@@ -69,27 +67,20 @@ public class OrganizationService {
     }
 
     public Organization saveOrganizationFromDTO(OrganizationDTO organizationDTO) {
-        Organization organization = new Organization(idService.generateRandomId(), null, organizationDTO.name(),
-                organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(), new ArrayList<>(),
-                0.0,new ArrayList<>());
+        String id = idService.generateRandomId();
+        Organization organization = new Organization(id, organizationDTO);
         return organizationRepo.save(organization);
     }
 
-    public OrganizationDTO getOrganizationDTObyId(String id) {
-        Organization organization =
-                organizationRepo.findById(id).orElseThrow(() -> new OrganizationNotFoundException(id));
-        return new OrganizationDTO(organization.name(), organization.homepage(), organization.email(),
-                organization.address(), organization.reviews(), organization.averageRating(), organization.courses());
+    public Organization getOrganizationById(String id) {
+        return organizationRepo.findById(id).orElseThrow(() -> new OrganizationNotFoundException(id));
     }
 
     public Organization updateOrganizationFromDTO(String id, OrganizationDTO organizationDTO) {
-        if (organizationRepo.existsById(id)) {
-            Organization updatedOrganization = new Organization(id,null, organizationDTO.name(),
-                    organizationDTO.homepage(), organizationDTO.email(), organizationDTO.address(),
-                    organizationDTO.reviews(), organizationDTO.averageRating(),new ArrayList<>());
-            return organizationRepo.save(updatedOrganization);
-        } else
+        if (!organizationRepo.existsById(id)) {
             throw new OrganizationNotFoundException(id);
+        }
+        return organizationRepo.save(new Organization(id, organizationDTO));
     }
 
     public void deleteOrganizationById(String id) {
@@ -103,13 +94,18 @@ public class OrganizationService {
     public Organization addReviewToOrganization(String organizationId, ReviewDTO reviewDTO) {
         Review review = new Review(idService.generateRandomId(), reviewDTO.author(), reviewDTO.comment(),
                 reviewDTO.starNumber());
-        Organization organization =
-                organizationRepo.findById(organizationId).orElseThrow(() -> new OrganizationNotFoundException(organizationId));
+        Organization organization = organizationRepo.findById(organizationId)
+                                                    .orElseThrow(
+                                                            () -> new OrganizationNotFoundException(organizationId));
         List<Review> reviews = new ArrayList<>(organization.reviews());
         reviews.add(review);
-        double averageRating = reviews.stream().mapToInt(Review::starNumber).average().orElse(0.0);
+        double averageRating = reviews.stream()
+                                      .mapToInt(Review::starNumber)
+                                      .average()
+                                      .orElse(0.0);
 
-        Organization actualisedOrganization = organization.withReviews(reviews).withAverageRating(averageRating);
+        Organization actualisedOrganization = organization.withReviews(reviews)
+                                                          .withAverageRating(averageRating);
         organizationRepo.save(actualisedOrganization);
         return actualisedOrganization;
     }

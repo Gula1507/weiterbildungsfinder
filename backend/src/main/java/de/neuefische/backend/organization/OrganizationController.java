@@ -32,8 +32,8 @@ public class OrganizationController {
     }
 
     @GetMapping("/{id}")
-    public OrganizationDTO getOrganizationById(@PathVariable String id) {
-        return organizationService.getOrganizationDTObyId(id);
+    public Organization getOrganizationById(@PathVariable String id) {
+        return organizationService.getOrganizationById(id);
     }
 
     @PutMapping("/{id}")

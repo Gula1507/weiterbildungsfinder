@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -92,7 +93,8 @@ public class OrganizationService {
     }
 
     public Organization addReviewToOrganization(String organizationId, ReviewDTO reviewDTO) {
-        Review review = new Review(idService.generateRandomId(), reviewDTO.author(), reviewDTO.comment(),
+        String currentlyLoggedInUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Review review = new Review(idService.generateRandomId(), currentlyLoggedInUserName, reviewDTO.comment(),
                 reviewDTO.starNumber());
         Organization organization = organizationRepo.findById(organizationId)
                                                     .orElseThrow(

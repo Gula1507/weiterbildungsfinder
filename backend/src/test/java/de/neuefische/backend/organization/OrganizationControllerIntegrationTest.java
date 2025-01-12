@@ -277,7 +277,7 @@ class OrganizationControllerIntegrationTest {
                   "address": "testaddress",
                   "reviews": [
                       {
-                          "author": "John",
+                          "author": "testuser",
                           "comment": "Not good",
                           "starNumber": 2
                       }

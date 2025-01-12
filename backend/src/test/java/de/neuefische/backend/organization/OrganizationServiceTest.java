@@ -15,6 +15,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +36,23 @@ class OrganizationServiceTest {
     ArbeitsagenturApiService mockedApiService = mock(ArbeitsagenturApiService.class);
     MongoTemplate mockedMongoTemplate = mock(MongoTemplate.class);
 
-    OrganizationService organizationService = new OrganizationService(mockedMongoTemplate, mockedOrganisationRepo,
-            mockedIdService, mockedApiService);
+    OrganizationService organizationService = new OrganizationService(mockedMongoTemplate,
+            mockedOrganisationRepo,
+            mockedIdService,
+            mockedApiService);
     private Organization testOrganization;
 
     @BeforeEach
     void setUp() {
-        testOrganization = new Organization("1", 100L,"testname", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0,new ArrayList<>());
+        testOrganization = new Organization("1",
+                100L,
+                "testname",
+                "testhomepage",
+                "testemail",
+                "testaddress",
+                new ArrayList<>(),
+                0.0,
+                new ArrayList<>());
     }
 
 
@@ -57,12 +71,33 @@ class OrganizationServiceTest {
 
     @Test
     void getAllOrganizations_ShouldReturnAllOrganizations() {
-        Organization testOrganizationA = new Organization("1",10L, "A-name", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0,new ArrayList<>());
-        Organization testOrganizationSmallA = new Organization("1", 102L,"a-name", "testhomepage", "testemail",
-                "testaddress", new ArrayList<>(), 0.0,new ArrayList<>());
-        Organization testOrganizationB = new Organization("1", 102L,"B-name", "testhomepage", "testemail", "testaddress",
-                new ArrayList<>(), 0.0,new ArrayList<>());
+        Organization testOrganizationA = new Organization("1",
+                10L,
+                "A-name",
+                "testhomepage",
+                "testemail",
+                "testaddress",
+                new ArrayList<>(),
+                0.0,
+                new ArrayList<>());
+        Organization testOrganizationSmallA = new Organization("1",
+                102L,
+                "a-name",
+                "testhomepage",
+                "testemail",
+                "testaddress",
+                new ArrayList<>(),
+                0.0,
+                new ArrayList<>());
+        Organization testOrganizationB = new Organization("1",
+                102L,
+                "B-name",
+                "testhomepage",
+                "testemail",
+                "testaddress",
+                new ArrayList<>(),
+                0.0,
+                new ArrayList<>());
 
         List<Organization> sortedOrganizations = List.of(testOrganizationA, testOrganizationSmallA, testOrganizationB);
 
@@ -108,8 +143,13 @@ class OrganizationServiceTest {
 
     @Test
     void saveOrganizationFromDTO_shouldReturnOrganizationWithGeneratedId() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("testname", "testhomepage",
-                "testemail", "testaddress", new ArrayList<>(), 0.0,new ArrayList<>());
+        OrganizationDTO organizationDTO = new OrganizationDTO("testname",
+                "testhomepage",
+                "testemail",
+                "testaddress",
+                new ArrayList<>(),
+                0.0,
+                new ArrayList<>());
         when(mockedOrganisationRepo.save(testOrganization)).thenReturn(testOrganization);
         when(mockedIdService.generateRandomId()).thenReturn("1");
         when(mockedOrganisationRepo.existsByName("testname2")).thenReturn(false);
@@ -143,11 +183,23 @@ class OrganizationServiceTest {
 
     @Test
     void updateOrganizationFromDTO_shouldReturnUpdatedOrganization_whenOrganizationExists() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name", "Updated Homepage", "updated@email.com"
-                , "Updated Address", new ArrayList<>(), 0.0,new ArrayList<>());
+        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name",
+                "Updated Homepage",
+                "updated@email.com",
+                "Updated Address",
+                new ArrayList<>(),
+                0.0,
+                new ArrayList<>());
         String id = "1";
-        Organization expectedOrganization = new Organization(id, 100L,"Updated Name", "Updated Homepage",
-                "updated@email" + ".com", "Updated" + " Address", new ArrayList<>(), 0.0,new ArrayList<>());
+        Organization expectedOrganization = new Organization(id,
+                100L,
+                "Updated Name",
+                "Updated Homepage",
+                "updated@email" + ".com",
+                "Updated" + " Address",
+                new ArrayList<>(),
+                0.0,
+                new ArrayList<>());
         when(mockedOrganisationRepo.existsById(id)).thenReturn(true);
         when(mockedOrganisationRepo.save(any(Organization.class))).thenReturn(expectedOrganization);
 
@@ -160,13 +212,18 @@ class OrganizationServiceTest {
 
     @Test
     void updateOrganizationFromDTO_shouldThrowException_whenOrganizationNotExist() {
-        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name", "Updated Homepage", "updated@email.com"
-                , "Updated Address", new ArrayList<>(), 0.0,new ArrayList<>());
+        OrganizationDTO organizationDTO = new OrganizationDTO("Updated Name",
+                "Updated Homepage",
+                "updated@email.com",
+                "Updated Address",
+                new ArrayList<>(),
+                0.0,
+                new ArrayList<>());
         String id = "999";
         when(mockedOrganisationRepo.existsById(id)).thenReturn(false);
 
-        assertThrows(OrganizationNotFoundException.class, () -> organizationService.updateOrganizationFromDTO(id,
-                organizationDTO));
+        assertThrows(OrganizationNotFoundException.class,
+                () -> organizationService.updateOrganizationFromDTO(id, organizationDTO));
         verify(mockedOrganisationRepo).existsById(id);
     }
 
@@ -189,20 +246,32 @@ class OrganizationServiceTest {
 
     @Test
     void addReviewToOrganization_shouldThrowException_whenOrganizationNotFound() {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        Authentication auth = new UsernamePasswordAuthenticationToken("testuser",
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        context.setAuthentication(auth);
+        SecurityContextHolder.setContext(context);
         ReviewDTO reviewDTO = new ReviewDTO("testauthor", "testcomment", 5);
         String id = "123";
-        when(mockedIdService.generateRandomId()).thenReturn("123");
+        when(mockedIdService.generateRandomId()).thenReturn(id);
         when(mockedOrganisationRepo.findById(id)).thenReturn(Optional.empty());
-
-        assertThrows(OrganizationNotFoundException.class, () -> organizationService.addReviewToOrganization(id,
-                reviewDTO));
+        assertThrows(OrganizationNotFoundException.class,
+                () -> organizationService.addReviewToOrganization(id, reviewDTO));
 
     }
 
     @Test
     void addReviewToOrganization_shouldReturnOrganizationWithActualizedReviews_whenOrganizationExist() {
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        Authentication auth = new UsernamePasswordAuthenticationToken("testuser",
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        securityContext.setAuthentication(auth);
+        SecurityContextHolder.setContext(securityContext);
         ReviewDTO reviewDTO = new ReviewDTO("testauthor", "testcomment", 3);
         List<Review> reviews = new ArrayList<>(List.of(new Review("123", "testauthor", "testcomment", 3)));
+
         when(mockedIdService.generateRandomId()).thenReturn("123");
         when(mockedOrganisationRepo.findById(testOrganization.id())).thenReturn(Optional.ofNullable(testOrganization));
 

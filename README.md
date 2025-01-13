@@ -4,8 +4,6 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend)
 
-This repository contains a project for a comparison platform of education providers in Germany.
-
 ## README in Other Languages
 
 - [README in German](README_DE.md)

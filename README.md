@@ -1,109 +1,129 @@
-# Weiterbildungsfinder
+# KursDA!
+
+### Comparison platform of education providers in Germany
+
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend) [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=gula1507_weiterbildungsfinder-backend&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=gula1507_weiterbildungsfinder-backend)
 
-Dieses Repository enthält ein Projekt für ein Vergleichsportal von Weiterbildungsanbietern.
+This repository contains a project for a comparison platform of education providers in Germany.
 
-## Beschreibung
+## README in Other Languages
 
-Das Hauptziel des Projekts ist es, den Nutzern die Suche nach einem Weiterbildungsanbieter zu erleichtern, Bewertungen für Kursanbieter zu ermöglichen und alle existierenden Weiterbildungsanbieter in Deutschland aufzulisten.
+- [README in German](README_DE.md)
+
+## Description
+
+The main goal of the project is to make it easier for users to search for a continuing education provider, enable them
+to leave reviews for course providers, and list all existing continuing education providers in Germany.
 
 ## Features
 
 Die Anwendung bietet folgende Möglichkeiten:
-- **Benutzerregistrierung und -anmeldung** mit Spring Security
-- **CRUD-Operationen** für Weiterbildungsanbieter
-- **Integration mit externen APIs**, um zusätzliche Daten zu Kursanbietern abzurufen
-- Auflistung von über **200 Weiterbildungsanbietern**
-- **Suchfunktion** nach Name des Kursanbieters
-- Möglichkeit, eine **Rezension zu hinterlassen**, inklusive Sternebewertung und Kommentar
-- Moderne **Benutzeroberfläche mit React**, inklusive eines responsiven Designs
 
-## Technologie-Stack
+- **User registration and login** mit Spring Security
+- **CRUD operations** for continuing education providers
+- fetch additional data about course providers from **external API**
+- Listing of over 200 education providers
+- **Search function** by course provider name
+- Ability to **leave a review**, including star rating and comment
+- Modern user interface with **React**, including a responsive design
+
+## Technology Stack
 
 ### Backend
+
 - Java (Spring Boot, Spring Security)
-- MongoDB mit MongoRepository
-- Docker für Containerisierung
+- MongoDB with MongoRepository
+- Docker for containerization
 - RESTful APIs
 
 ### Frontend
+
 - React
 - TypeScript
-- Axios für API-Aufrufe
+- Axios for API-calls
 - HTML/CSS3
 
 ### Testing
+
 - JUnit 5
 - Mockito
-- **Flapdoodle** für eingebettete MongoDB in Tests
+- **Flapdoodle** for embedded MongoDB in tests
 
-### Weitere Technologien
+### Other Technologies
+
 - SonarCloud
 
 ## Deployment
 
-Das Projekt ist unter folgender URL verfügbar: [https://kursda.onrender.com/](https://kursda.onrender.com/).
+The project is available at the following URL: [https://kursda.onrender.com/](https://kursda.onrender.com/).
 
-**Hinweis:** Die Seite könnte etwas länger zum Laden brauchen. Bitte haben Sie Geduld.
+**Note:** The page may take a little longer to load. Please be patient.
 
 ## Projekt-Setup
 
-### Voraussetzungen
-Stelle sicher, dass du folgende Software installiert hast:
-- **Java 17+** für das Backend
-- **Node.js 16+** für das Frontend
-- **Docker** und **Docker Compose**
-- **MongoDB** (lokal oder als Cloud-Dienst, z.B. Render)
+### Prerequisites
+
+Make sure you have the following software installed:
+
+- **Java 17+** for the backend
+- **Node.js 16+** for the frontend
+- **MongoDB**
 
 ## Installation
 
-### 1. Klone das Repository
+### 1. Clone the repository
+
 ```bash
 git clone https://github.com/Gula1507/weiterbildungsfinder.git
 cd weiterbildungsfinder
 ```
 
-### 2. Backend starten
-Navigiere ins Backend-Verzeichnis und starte die Spring Boot-Anwendung:
+### 2. Start the backend
+
+Navigate to the backend directory and start the Spring Boot application:
 
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
 
-### 3. Frontend starten
-Navigiere ins Frontend-Verzeichnis, installiere die Abhängigkeiten und starte die Anwendung:
+### 3. Start the frontend
+
+Navigate to the frontend directory, install the dependencies, and start the application:
 
 ```bash
 cd frontend
 npm install
 npm start
 ```
-### Konfiguration
-Um Umgebungsvariablen zu setzen, erstelle eine .env-Datei im Verzeichnis backend und füge folgende Werte hinzu:
+
+### Configuration
+
+To set environment variables, create a .env file in the backend directory and add the following values:
 
 ```bash
-SPRING_MONGODB_URI=mongodb://localhost:27017/deine-datenbank
+SPRING_MONGODB_URI=mongodb://localhost:27017/your-database
 ```
 
-
-
 ### Screenshots
-Screenshot der Startseite:
 
+Screenshot of the homepage:
 
+<img src="frontend/public/images/screenshot2.png" alt="Dashboard screenshot"  style="max-width:80%; height: auto;">
 
-![Dashboard screenshot](frontend/public/images/screenshot2.png)
+Screenshot of the course provider detail page:
 
-Screenshot der Detailseite für Kursanbieter:
-![Course provider screenshot](frontend/public/images/screenshot1.png)
+<img src="frontend/public/images/screenshot1.png" alt="Course provider screenshot" style="max-width:80%; height: auto;">
 
-### Geplante Verbesserungen
-- Erweiterung der Filter- und Suchfunktion für Kursanbieter
-- Erweiterte Login/Logout-Funktionalität
-- CRUD-Operationen für Kurse
-- Einloggen mit LinkedIn
+### Planned Improvements
 
-### Lizenz
+- Extension of the filter and search function for course providers
+- Extended login/logout functionality
+- CRUD operations for courses
+- Login with LinkedIn
 
-Dieses Projekt steht unter der MIT-Lizenz mit einer Klausel für nicht-kommerzielle Nutzung. Siehe [LICENSE-Datei](./LICENSE) für Details.
+### License
+
+This project is licensed under the MIT license with a clause for non-commercial use. See the [LICENSE file](./LICENSE)
+for details.
+

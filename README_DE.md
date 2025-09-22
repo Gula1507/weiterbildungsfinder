@@ -84,7 +84,7 @@ npm start
 Um Umgebungsvariablen zu setzen, erstelle eine .env-Datei im Verzeichnis backend und füge folgende Werte hinzu:
 
 ```bash
-SPRING_MONGODB_URI=mongodb://localhost:27017/deine-datenbank
+MONGODB_URI=mongodb://localhost:27017/deine-datenbank
 ```
 
 

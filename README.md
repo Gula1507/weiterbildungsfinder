@@ -100,7 +100,7 @@ npm start
 To set environment variables, create a .env file in the backend directory and add the following values:
 
 ```bash
-SPRING_MONGODB_URI=mongodb://localhost:27017/your-database
+MONGODB_URI=mongodb://localhost:27017/your-database
 ```
 
 ### Screenshots
